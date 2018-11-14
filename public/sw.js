@@ -16,7 +16,12 @@ self.addEventListener('activate', event => {
   *        -- Be aware that this results in your SW controlling pages that loaded
   *           regularly over the network, or possibly via a different SW.
 */
-  return self.clients.claim();
+  // return self.clients.claim();
+  event.waitUntil(clients.claim());
 });
+
+self.addEventListener('fetch', event => {
+  console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
+})
 
 
