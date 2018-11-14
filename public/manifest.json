@@ -9,6 +9,8 @@
   "description": "A Progressive Web App to share photos, location and comments",
   "dir": "ltr",
   "lang": "en-US",
+  "version": "3.1.2.4567",
+  "version_name": "3.1.2.4567",
   "orientation": "portrait-primary",
   "icons": [
     {
