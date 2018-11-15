@@ -16,7 +16,21 @@ function openCreatePostModal() {
     // We call the prompt() method which will now show this banner
     promptDeferment.prompt();
     
+    // See what the user picked (whether or not they chose to install the banner)
+    //     by using the Promise, userChoice()
+    promptDeferment.userChoice.then(theChoiceResult => {
+      console.log(theChoiceResult.outcome);
+      
+      if(theChoiceResult.outcome === 'dismissed') {
+        console.log('User cancelled installation');
+      } else {
+        console.log('User added banner to the home screen')
+      }
+    })
     
+    // Set promptDeferment equal to null because you only have one shot to prompt the user
+    //      to install the banner.  They can enable banner manually if they canceled installation
+    promptDeferment = null;
   }
 }
 
