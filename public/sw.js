@@ -1,3 +1,4 @@
+// install and activate are triggered by the Browser
 self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Service Worker ... ', event);
 });
@@ -17,11 +18,21 @@ self.addEventListener('activate', event => {
   *           regularly over the network, or possibly via a different SW.
 */
   // return self.clients.claim();
+  
+  /*
+   Using claim() inside service worker's "activate" event listener
+   so that clients loaded in the same scope do not need to be reloaded
+    before their fetches will go through this service worker.
+  * */
   event.waitUntil(clients.claim());
 });
 
+
+// fetch is triggered by the web application
 self.addEventListener('fetch', event => {
-  console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
+  // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
+  
+  event.respondWith(fetch(event.request));
 })
 
 
