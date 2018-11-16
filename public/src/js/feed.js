@@ -2,6 +2,10 @@ let shareImageButton = document.querySelector('#share-image-button');
 let createPostArea = document.querySelector('#create-post');
 let closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 
+if(!window.Promise) {
+  window.Promise = Promise;
+}
+
 
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
