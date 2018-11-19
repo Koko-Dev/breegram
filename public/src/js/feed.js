@@ -1,6 +1,7 @@
 let shareImageButton = document.querySelector('#share-image-button');
 let createPostArea = document.querySelector('#create-post');
 let closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
+let sharedMomentsArea = document.querySelector('#shared-moments');
 
 if(!window.Promise) {
   window.Promise = Promise;
@@ -62,3 +63,42 @@ shareImageButton.addEventListener('click', openCreatePostModal);
  </div>
  */
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+
+function createCard() {
+  var cardWrapper = document.createElement('div');
+  cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
+  
+  var cardImage = document.createElement('div');
+  cardImage.className = 'mdl-card__title';
+  cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
+  cardImage.style.backgroundSize = 'cover';
+  cardImage.style.height = '180px';
+  cardWrapper.appendChild(cardImage);
+  
+  var cardTitleTextElement = document.createElement('h2');
+  cardTitleTextElement.className = 'mdl-card__title-text';
+  cardTitleTextElement.textContent = 'Bronx Trip';
+  cardTitleTextElement.style.color = "#F7F3EE";
+  cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
+  cardTitleTextElement.style.fontWeight = '700';
+  cardTitleTextElement.style.textShadow = '2px 2px #20262A';
+  
+  cardImage.appendChild(cardTitleTextElement);
+  
+  var cardSupportingText = document.createElement('div');
+  cardSupportingText.className = 'mdl-card__supporting-text';
+  cardSupportingText.textContent = 'In Bronx, NY';
+  cardSupportingText.style.textAlign = 'center';
+  cardWrapper.appendChild(cardSupportingText);
+  
+  componentHandler.upgradeElement(cardWrapper);
+  sharedMomentsArea.appendChild(cardWrapper);
+}
+
+fetch('https://httpbin.org/get')
+  .then(function(res) {
+    return res.json();
+  })
+  .then(function(data) {
+    createCard();
+  });
