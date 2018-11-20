@@ -1,10 +1,10 @@
 // install and activate are triggered by the Browser
 self.addEventListener('install', event => {
-  console.log('[Service Worker] Installing Service Worker ... ', event);
+  // console.log('[Service Worker] Installing Service Worker ... ', event);
 });
 
 self.addEventListener('activate', event => {
-  console.log('[Service Worker] Activating Service Worker ...', event);
+  // console.log('[Service Worker] Activating Service Worker ...', event);
   
   /*
     From: https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
@@ -29,7 +29,7 @@ self.addEventListener('activate', event => {
 
 
 // fetch is triggered by the web application
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
   
   event.respondWith(fetch(event.request));

@@ -65,17 +65,17 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 function createCard() {
-  var cardWrapper = document.createElement('div');
+  let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   
-  var cardImage = document.createElement('div');
+  let cardImage = document.createElement('div');
   cardImage.className = 'mdl-card__title';
   cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
   cardImage.style.backgroundSize = 'cover';
   cardImage.style.height = '180px';
   cardWrapper.appendChild(cardImage);
   
-  var cardTitleTextElement = document.createElement('h2');
+  let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.textContent = 'Bronx Trip';
   cardTitleTextElement.style.color = "#F7F3EE";
@@ -85,11 +85,12 @@ function createCard() {
   
   cardImage.appendChild(cardTitleTextElement);
   
-  var cardSupportingText = document.createElement('div');
+  let cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'In Bronx, NY';
+  cardSupportingText.textContent = 'Bronx, NY';
   cardSupportingText.style.textAlign = 'center';
   cardSupportingText.style.color = '#5B5E6F';
+  cardSupportingText.style.textShadow = '1px 1px #9F9997';
   cardWrapper.appendChild(cardSupportingText);
   
   componentHandler.upgradeElement(cardWrapper);
