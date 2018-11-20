@@ -89,6 +89,7 @@ function createCard() {
   cardSupportingText.className = 'mdl-card__supporting-text';
   cardSupportingText.textContent = 'In Bronx, NY';
   cardSupportingText.style.textAlign = 'center';
+  cardSupportingText.style.color = '#5B5E6F';
   cardWrapper.appendChild(cardSupportingText);
   
   componentHandler.upgradeElement(cardWrapper);
