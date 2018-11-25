@@ -1,4 +1,4 @@
-var CACHE_STATIC_NAME = 'static-v2';
+const CACHE_STATIC_NAME = 'static-v2';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 var STATIC_FILES = [
   '/',
@@ -7,7 +7,8 @@ var STATIC_FILES = [
   '/src/js/feed.js',
   '/src/js/promise.js',
   '/src/js/fetch.js',
-  '/src/js/material.min.js',
+  '/src/material-design/material.min.js',
+  '/src/material-design/material.min.css',
   '/src/css/app.css',
   '/src/css/feed.css',
   '/src/css/help.css',
@@ -15,8 +16,7 @@ var STATIC_FILES = [
   '/src/images/breeGrams1.jpeg',
   '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
-  'https://fonts.googleapis.com/icon?family=Material+Icons',
-  'https://code.getmdl.io/1.3.0/material.indigo-pink.min.css'
+  'https://fonts.googleapis.com/icon?family=Material+Icons'
 ];
 
 
@@ -76,7 +76,26 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', (event) => {
   // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
   
-  event.respondWith(fetch(event.request));
+  // Fetch the data from the cache, if available
+  // event.request must be a request object, never a string
+  // caches.match requests a request object which are our cache keys
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // response is null if there is no match
+        if(response) {
+          // Here we are not making a network request,
+          // but we are intercepting the request and we are not issuing a new one
+          // Instead we are just looking to see if there is a match
+          // If there is a match iin the cache, then we return the cached response
+          return response;
+        } else {
+          // If it is not in the cache, get it from the Network
+          return fetch(event.request);
+        }
+      })
+  );
+  
 })
 
 
