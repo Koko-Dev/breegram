@@ -16,7 +16,8 @@ var STATIC_FILES = [
   '/src/images/breeGrams1.jpeg',
   '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
-  'https://fonts.googleapis.com/icon?family=Material+Icons'
+  'https://fonts.googleapis.com/icon?family=Material+Icons',
+  'http://localhost:8080/favicon.ico'
 ];
 
 
@@ -72,6 +73,7 @@ self.addEventListener('activate', event => {
 });
 
 
+/* Pre-Caching Strategy */
 // fetch is triggered by the web application
 self.addEventListener('fetch', (event) => {
   // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
@@ -79,7 +81,7 @@ self.addEventListener('fetch', (event) => {
   // Fetch the data from the cache, if available
   // event.request must be a request object, never a string
   // caches.match requests a request object which are our cache keys
-  event.respondWith(
+/*  event.respondWith(
     caches.match(event.request)
       .then(response => {
         // response is null if there is no match
@@ -95,7 +97,48 @@ self.addEventListener('fetch', (event) => {
         }
       })
   );
-  
+});*/
+
+/* Dynamic Caching Strategy */
+// Assets are cached for offline-first only when user accessed them while online
+// For Dynamic caching, we have to go to the fetch listener because
+//   Dynamic Caching means that we have a fetch request
+//   that we have to go anyway when we are online, so we want to just store
+//   the response in the cache for future offline-first use
+self.addEventListener('fetch', event => {
+  console.log('Service Worker - fetch event - Dynamic Caching', event);
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if(response) {
+          return response;
+      } else {
+          // Dynamic Caching begins here
+          // We return the event.request as usual, but we also...
+          //    -- open/create a dynamic cache and..
+          //    -- store the event request that was not in the Static Cache
+          //     into the new Dynamic Cache for later offline-first capabilities
+          return fetch(event.request)
+            .then(networkResponse => {
+              return caches.open('dynamic')
+                .then(cache => {
+                  // Store the item in dynamic cache with a clone because..
+                  //   we can only use each parameter/response Once
+                  cache.put(event.request.url, networkResponse.clone());
+                  return networkResponse;
+                })
+            })
+            .catch(error => {
+              console.log('Service Worker -- Error: ', error);
+            })
+        }
+      })
+  )
 })
+
+});
+
+
+
 
 
