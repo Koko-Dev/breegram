@@ -78,6 +78,7 @@ function createCard() {
   let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.textContent = 'Bronx Trip';
+  
   cardTitleTextElement.style.color = "#F7F3EE";
   cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
   cardTitleTextElement.style.fontWeight = '700';

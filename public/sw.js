@@ -1,6 +1,6 @@
-const CACHE_STATIC_NAME = 'static-v2';
-var CACHE_DYNAMIC_NAME = 'dynamic-v2';
-var STATIC_FILES = [
+const STATIC_CACHE = 'static-v4';
+const DYNAMIC_CACHE = 'dynamic-v4';
+const STATIC_FILES = [
   '/',
   '/index.html',
   '/src/js/app.js',
@@ -41,8 +41,8 @@ var STATIC_FILES = [
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Installing Service Worker ...', event);
   event.waitUntil(
-    caches.open(CACHE_STATIC_NAME)
-          .then(function (cache) {
+    caches.open(STATIC_CACHE)
+          .then(cache => {
             console.log('[Service Worker] Pre-Caching App Shell');
             return cache.addAll(STATIC_FILES);
           }));
@@ -120,7 +120,7 @@ self.addEventListener('fetch', event => {
           //     into the new Dynamic Cache for later offline-first capabilities
           return fetch(event.request)
             .then(networkResponse => {
-              return caches.open('dynamic')
+              return caches.open(DYNAMIC_CACHE)
                 .then(cache => {
                   // Store the item in dynamic cache with a clone because..
                   //   we can only use each parameter/response Once
@@ -137,8 +137,5 @@ self.addEventListener('fetch', event => {
 })
 
 });
-
-
-
 
 
