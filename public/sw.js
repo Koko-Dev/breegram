@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v4';
-const DYNAMIC_CACHE = 'dynamic-v4';
+const STATIC_CACHE = 'static-v5';
+const DYNAMIC_CACHE = 'dynamic-v5';
 const STATIC_FILES = [
   '/',
   '/index.html',
@@ -16,8 +16,7 @@ const STATIC_FILES = [
   '/src/images/breeGrams1.jpeg',
   '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
-  'https://fonts.googleapis.com/icon?family=Material+Icons',
-  'http://localhost:8080/favicon.ico'
+  'https://fonts.googleapis.com/icon?family=Material+Icons'
 ];
 
 
@@ -48,8 +47,54 @@ self.addEventListener('install', function (event) {
           }));
 });
 
+/* The best place to do cache cleanup is in the activate event because
+*      this will only be executed once the user closes all pages,
+ *      in the service worker scope, and opens a new one.
+ *      At that point it is safe to update the cache because we are
+ *      no longer in a running application
+ *      */
 self.addEventListener('activate', event => {
   console.log('[Service Worker] Activating Service Worker ...', event);
+  /* First, we want to wait until we are done with the cleanup
+           before we continue, so we use waitUntil()
+     If we do not do this, a fetch event may be triggered delivering
+     files from the old cache which we are about to tear down.
+ */
+  
+  event.waitUntil(
+    // keys() is an array of strings
+    //  -it outputs an array of the names of sub-caches in our cache storage
+    // i.e. ['static-v3', 'static-v4', 'dynamic-v3', 'dynamic-v4']
+    caches.keys()
+      .then(keyList => {
+        console.log('Service Worker', keyList)
+        // Promise.all() takes an Array of Promises and waits for them all to finish
+        // Using this so that we only return from this function once we are really
+        //     done with the cleanup.
+        // Now, at this point we do not have an Array of Promises, but we do have
+        //    an Array of keys(), which is an Array of strings (names of caches).
+        // So, we convert them into Promises using map( ).
+        // map() is a default JS area operator which allows us to transform an Array
+        // So, we want to transform this Array of strings into an Array of Promises
+        return Promise.all(keyList.map(keyInList => {
+          // if the key in the list is not equal to the current version of
+          //  the static or dynamic cache names, then we want to delete it
+          // if the conditional is not satisfied, then it will return null
+          // (i.e. It will replace the given string in the keyInList with nothing)
+          if(keyInList !== STATIC_CACHE && keyInList !== DYNAMIC_CACHE) {
+            console.log('Service Worker: Removing old cache: ', keyInList);
+            
+            //  caches.delete() returns a Promise and map() returns an Array
+            //  The result of map() then, therefore, in this case,
+            //      will return an Array of Promises.  Hence,
+            //  Promises.all() therefore receives the required Array of Promises
+            caches.delete(keyInList);
+          }
+        }))
+      })
+    
+  
+  );
   
   /*
     From: https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
@@ -106,7 +151,7 @@ self.addEventListener('fetch', (event) => {
 //   that we have to go anyway when we are online, so we want to just store
 //   the response in the cache for future offline-first use
 self.addEventListener('fetch', event => {
-  console.log('Service Worker - fetch event - Dynamic Caching', event);
+  // console.log('Service Worker - fetch event - Dynamic Caching', event);
   event.respondWith(
     caches.match(event.request)
       .then(response => {
