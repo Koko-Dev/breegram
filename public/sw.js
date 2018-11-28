@@ -1,5 +1,7 @@
 const STATIC_CACHE = 'static-v5';
 const DYNAMIC_CACHE = 'dynamic-v5';
+
+// for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
   '/',
   '/index.html',
@@ -25,10 +27,10 @@ const STATIC_FILES = [
   console.log('[Service Worker] Installing Service Worker ... ', event);
   // caches.open() returns a promise --
   //    it  opens cache if it exists, or creates cache if doesn't
-  // Note: The install event does not wait for caches.open() to load
-  //       To ensure it does, we use the waitUntil() method, which
-  //       returns a promise, and now won't finish installation process
-  //       until that is done.
+  // Note: The install event does not wait for caches.open() to load.
+  //    To ensure it does, we use the waitUntil() method, which
+  //    returns a promise, and install event now won't finish installation process
+  //       until caches.open() has completed loading.
   event.waitUntil(caches.open(STATIC_FILES)
     .then(theStaticCache => {
       console.log('[Service Worker] Pre-caching App Shell');
@@ -37,37 +39,50 @@ const STATIC_FILES = [
   
 });*/
 
+
+
+// The install event is the best place to cache static assets
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Installing Service Worker ...', event);
+  // waitUntil() ensures caches.open() finishes loading
+  //     before installation process is complete
   event.waitUntil(
     caches.open(STATIC_CACHE)
           .then(cache => {
             console.log('[Service Worker] Pre-Caching App Shell');
+            
+            // addAll() takes an Array of strings identifying the request.url's
+            //  we want to cache,  but will fail all if even one request.url fails.
+            // We can use cache.add() to store individual
+            //  files in the cache without risking that the entire cache is
+            //  rejected for one request.url
             return cache.addAll(STATIC_FILES);
-          }));
+          }))
 });
+
+
 
 /* The best place to do cache cleanup is in the activate event because
 *      this will only be executed once the user closes all pages,
- *      in the service worker scope, and opens a new one.
- *      At that point it is safe to update the cache because we are
- *      no longer in a running application
+ *      in the service worker scope, and opens a new one (right at the start).
+ *      At that point it is safe to update caches and remove old ones.
  *      */
 self.addEventListener('activate', event => {
   console.log('[Service Worker] Activating Service Worker ...', event);
+  
   /* First, we want to wait until we are done with the cleanup
            before we continue, so we use waitUntil()
      If we do not do this, a fetch event may be triggered delivering
      files from the old cache which we are about to tear down.
  */
-  
   event.waitUntil(
     // keys() is an array of strings
-    //  -it outputs an array of the names of sub-caches in our cache storage
+    //  -it outputs an array of strings, the names of sub-caches, in our cache storage
     // i.e. ['static-v3', 'static-v4', 'dynamic-v3', 'dynamic-v4']
     caches.keys()
       .then(keyList => {
-        console.log('Service Worker', keyList)
+        console.log('Service Worker', keyList);
+        
         // Promise.all() takes an Array of Promises and waits for them all to finish
         // Using this so that we only return from this function once we are really
         //     done with the cleanup.
@@ -78,8 +93,8 @@ self.addEventListener('activate', event => {
         // So, we want to transform this Array of strings into an Array of Promises
         return Promise.all(keyList.map(keyInList => {
           // if the key in the list is not equal to the current version of
-          //  the static or dynamic cache names, then we want to delete it
-          // if the conditional is not satisfied, then it will return null
+          //  the static or dynamic cache names, then we want to delete it.
+          // If the conditional is not satisfied, then it will return null
           // (i.e. It will replace the given string in the keyInList with nothing)
           if(keyInList !== STATIC_CACHE && keyInList !== DYNAMIC_CACHE) {
             console.log('Service Worker: Removing old cache: ', keyInList);
@@ -88,7 +103,7 @@ self.addEventListener('activate', event => {
             //  The result of map() then, therefore, in this case,
             //      will return an Array of Promises.  Hence,
             //  Promises.all() therefore receives the required Array of Promises
-            caches.delete(keyInList);
+            return caches.delete(keyInList);
           }
         }))
       })
@@ -116,6 +131,7 @@ self.addEventListener('activate', event => {
   * */
   event.waitUntil(clients.claim());
 });
+
 
 
 /* Pre-Caching Strategy */
@@ -152,9 +168,11 @@ self.addEventListener('fetch', (event) => {
 //   the response in the cache for future offline-first use
 self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
+  // We want to respond with our cached assets
   event.respondWith(
     caches.match(event.request)
       .then(response => {
+        // The parameter response is null if there is no match
         if(response) {
           return response;
       } else {
@@ -165,11 +183,15 @@ self.addEventListener('fetch', event => {
           //     into the new Dynamic Cache for later offline-first capabilities
           return fetch(event.request)
             .then(networkResponse => {
+              // If you don't return caches.open, caches.put() will not do much
               return caches.open(DYNAMIC_CACHE)
                 .then(cache => {
                   // Store the item in dynamic cache with a clone because..
                   //   we can only use each parameter/response Once
+                  //  One network response is stored in cache and the other goes to user.
                   cache.put(event.request.url, networkResponse.clone());
+                  
+                  // Return the response to the user so that they get what they requested
                   return networkResponse;
                 })
             })
