@@ -58,7 +58,8 @@ self.addEventListener('install', function (event) {
             //  rejected for one request.url
             return cache.addAll(STATIC_FILES);
           }))
-});
+});  // End install event
+
 
 
 
@@ -107,8 +108,6 @@ self.addEventListener('activate', event => {
           }
         }))
       })
-    
-  
   );
   
   /*
@@ -130,19 +129,21 @@ self.addEventListener('activate', event => {
     before their fetches will go through this service worker.
   * */
   event.waitUntil(clients.claim());
-});
+});  // END activate event
 
 
 
-/* Pre-Caching Strategy */
-// fetch is triggered by the web application
-self.addEventListener('fetch', (event) => {
+
+  /* PRE-CACHING Only Strategy
+    - fetch is triggered by the web application
+ */
+/*self.addEventListener('fetch', (event) => {
   // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
   
   // Fetch the data from the cache, if available
   // event.request must be a request object, never a string
   // caches.match requests a request object which are our cache keys
-/*  event.respondWith(
+  event.respondWith(
     caches.match(event.request)
       .then(response => {
         // response is null if there is no match
@@ -158,9 +159,12 @@ self.addEventListener('fetch', (event) => {
         }
       })
   );
-});*/
+});    // End fetch event -- PRE-CACHING Only Strategy
+*/
 
-/* Dynamic Caching Strategy */
+
+
+/* DYNAMIC CACHING Strategy */
 // Assets are cached for offline-first only when user accessed them while online
 // For Dynamic caching, we have to go to the fetch listener because
 //   Dynamic Caching means that we have a fetch request
@@ -201,8 +205,6 @@ self.addEventListener('fetch', event => {
         }
       })
   )
-})
-
-});
+}); // End DYNAMIC CACHING Strategy
 
 
