@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v5';
-const DYNAMIC_CACHE = 'dynamic-v5';
+const STATIC_CACHE = 'static-v6';
+const DYNAMIC_CACHE = 'dynamic-v6';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -170,7 +170,7 @@ self.addEventListener('activate', event => {
 //   Dynamic Caching means that we have a fetch request
 //   that we have to go anyway when we are online, so we want to just store
 //   the response in the cache for future offline-first use
-self.addEventListener('fetch', event => {
+/*self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
   // We want to respond with our cached assets
   event.respondWith(
@@ -205,6 +205,52 @@ self.addEventListener('fetch', event => {
         }
       })
   )
-}); // End DYNAMIC CACHING Strategy
+});*/ // End DYNAMIC CACHING Strategy
 
+
+
+
+//  USE CASE: User triggers a fetch event
+//    --When the user triggers a fetch event, such as an article on a news site which
+//      you want to access later, perhaps even offline.
+//    -- To do this, we need to temporarily turn off our dynamic caching because
+//      if it's turned on, we can't simulate this because we are caching everything anyway.
+self.addEventListener('fetch', event => {
+  // console.log('Service Worker - fetch event - Dynamic Caching', event);
+  // We want to respond with our cached assets
+  event.respondWith(
+    caches.match(event.request)
+          .then(response => {
+            // The parameter response is null if there is no match
+            if(response) {
+              return response;
+            } else {
+              // Dynamic Caching begins here
+              // We return the event.request as usual, but we also...
+              //    -- open/create a dynamic cache and..
+              //    -- store the event request that was not in the Static Cache
+              //     into the new Dynamic Cache for later offline-first capabilities
+              return fetch(event.request)
+                .then(networkResponse => {
+                  // If you don't return caches.open, caches.put() will not do much
+                  return caches.open(DYNAMIC_CACHE)
+                               .then(cache => {
+                                 // Store the item in dynamic cache with a clone because..
+                                 //   we can only use each parameter/response Once
+                                 //  One network response is stored in cache and the other goes to user.
+                                 
+                                 // Temporarily disable cache.put() to simulate Use Case
+                                  /*cache.put(event.request.url, networkResponse.clone());*/
+              
+                                 // Return the response to the user so that they get what they requested
+                                 return networkResponse;
+                               })
+                })
+                .catch(error => {
+                  console.log('Service Worker -- Error: ', error);
+                })
+            }
+          })
+  )
+});
 

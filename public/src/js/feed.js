@@ -62,7 +62,17 @@ shareImageButton.addEventListener('click', openCreatePostModal);
      </button>
  </div>
  */
+
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+
+
+// For clicked button to save Card
+// Receives the event from addEventListener click event
+function onSaveButtonClicked(event) {
+  console.log('Clicked');
+}
+
+
 
 function createCard() {
   let cardWrapper = document.createElement('div');
@@ -92,6 +102,16 @@ function createCard() {
   cardSupportingText.style.textAlign = 'center';
   cardSupportingText.style.color = '#5B5E6F';
   cardSupportingText.style.textShadow = '1px 1px #9F9997';
+  
+  // Add a button to save the card
+  let cardSaveButton = document.createElement('button');
+  cardSaveButton.textContent = 'Save';
+  
+  // Add event listener click event
+  cardSaveButton.addEventListener('click', onSaveButtonClicked);
+  
+  
+  cardSupportingText.appendChild(cardSaveButton);
   cardWrapper.appendChild(cardSupportingText);
   
   componentHandler.upgradeElement(cardWrapper);
