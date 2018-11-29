@@ -136,6 +136,31 @@ self.addEventListener('activate', event => {
 
 
 
+// CACHE ONLY
+/*
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+  )
+});  // End CACHE ONLY
+
+*/
+
+
+
+// NETWORK ONLY STRATEGY -- no need for a service worker really
+//  -- This would make sense for some resources which we will split up
+//     when we parse an incoming request to funnel some through when
+//     we just need the network result.  Otherwise, there is no need.
+/*
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+  )
+});
+*/
+
+
 
   /* PRE-CACHING Only Strategy
     - fetch is triggered by the web application
@@ -168,12 +193,14 @@ self.addEventListener('activate', event => {
 
 
 // Currently not in use
-/* DYNAMIC CACHING Strategy */
+/* DYNAMIC CACHING Strategy -- Cache with Network Fallback */
 // Assets are cached for offline-first only when user accessed them while online
 // For Dynamic caching, we have to go to the fetch listener because
 //   Dynamic Caching means that we have a fetch request
 //   that we have to go anyway when we are online, so we want to just store
 //   the response in the cache for future offline-first use
+// NOTE: THIS IS DEBT HEAVY because we do not update via network by default
+//       but we go for the cache first
 /*self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
   // We want to respond with our cached assets
