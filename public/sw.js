@@ -345,7 +345,7 @@ self.addEventListener('fetch', event => {
 */
 
 
-
+// Currently not in use
 // NETWORK with CACHE FALLBACK Strategy
 // Plus:  We serve updated content first
 // Drawbacks:  -We do not take advantage of the faster response with a cache first strategy.
@@ -355,6 +355,7 @@ self.addEventListener('fetch', event => {
 //             before you reach out to the backup cache == Terrible user experience)
 // Use Case:  For assets which you can fetch in the background
 //     that do not have to be used immediately
+/*
 self.addEventListener('fetch', event => {
   // We want to first respond with our network and then fall back to the cache if no connection
   event.respondWith(
@@ -364,3 +365,27 @@ self.addEventListener('fetch', event => {
       })
   );
 }); // End of NETWORK with CACHE FALLBACK Strategy
+*/
+
+
+
+// NETWORK FIRST, then DYNAMIC, then CACHE FALLBACK Strategy
+self.addEventListener('fetch', event => {
+  // Network First
+  event.respondWith(
+    fetch(event.request)
+      .then(networkResponse => {
+        // Dynamically Cache and then return response
+        return caches.open(DYNAMIC_CACHE)
+          .then(cache => {
+            cache.put(event.request.url, networkResponse.clone());
+            return networkResponse;
+          })
+      })
+      .catch(error => {
+        // Return response from the Cache
+        return caches.match(event.request);
+      })
+  )
+});   // End NETWORK FIRST, then DYNAMIC WITH CACHE FALLBACK Strategy
+
