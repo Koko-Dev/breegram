@@ -63,12 +63,14 @@ shareImageButton.addEventListener('click', openCreatePostModal);
  </div>
  */
 
-closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+// Currently not in use; Use case, User generated fetch event via button
+//closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 
+// Currently not in use; allows to save assets in cache on demand otherwise
 // For clicked button to save Card
 // Receives the event from addEventListener click event
-function onSaveButtonClicked(event) {
+/*function onSaveButtonClicked(event) {
   console.log('Clicked');
   
   // Check to make sure Browser accepts the Cache API
@@ -83,9 +85,7 @@ function onSaveButtonClicked(event) {
             cache.add('/src/images/breeGrams1.jpeg');
           })
   }
-  
-  
-}
+}*/
 
 
 
@@ -118,17 +118,19 @@ function createCard() {
   cardSupportingText.style.color = '#5B5E6F';
   cardSupportingText.style.textShadow = '1px 1px #9F9997';
   
-  // Add a button to save the card
-  let cardSaveButton = document.createElement('button');
+  // Add a button to save the card for User Triggered fetch event
+  //  Commented out for future possible capability
+  //  Dynamic Caching re-added in its place
+ /*
+ let cardSaveButton = document.createElement('button');
   cardSaveButton.textContent = 'Save';
   
   // Add event listener click event
   cardSaveButton.addEventListener('click', onSaveButtonClicked);
-  
-  
   cardSupportingText.appendChild(cardSaveButton);
+  */
+ 
   cardWrapper.appendChild(cardSupportingText);
-  
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
 }

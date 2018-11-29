@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v7';
-const DYNAMIC_CACHE = 'dynamic-v7';
+const STATIC_CACHE = 'static-v8';
+const DYNAMIC_CACHE = 'dynamic-v8';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -17,7 +17,10 @@ const STATIC_FILES = [
   '/help/index.html',
   '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
-  'https://fonts.googleapis.com/icon?family=Material+Icons'
+  'https://fonts.googleapis.com/icon?family=Material+Icons',
+  'https://httpbin.org/get',
+  '/src/images/breeGrams1.jpeg',
+  '/offline.html'
 ];
 
 
@@ -164,6 +167,7 @@ self.addEventListener('activate', event => {
 
 
 
+// Currently not in use
 /* DYNAMIC CACHING Strategy */
 // Assets are cached for offline-first only when user accessed them while online
 // For Dynamic caching, we have to go to the fetch listener because
@@ -182,20 +186,20 @@ self.addEventListener('activate', event => {
       } else {
           // Dynamic Caching begins here
           // We return the event.request as usual, but we also...
-          //    -- open/create a dynamic cache and..
-          //    -- store the event request that was not in the Static Cache
-          //     into the new Dynamic Cache for later offline-first capabilities
+          //  -- open/create a dynamic cache and..
+          //  -- store the event request that was not in the Static Cache
+          // into the new Dynamic Cache for later offline-first capabilities
           return fetch(event.request)
             .then(networkResponse => {
               // If you don't return caches.open, caches.put() will not do much
               return caches.open(DYNAMIC_CACHE)
                 .then(cache => {
                   // Store the item in dynamic cache with a clone because..
-                  //   we can only use each parameter/response Once
-                  //  One network response is stored in cache and the other goes to user.
+                  // we can only use each parameter/response Once
+                  // Network response is stored in cache and the other goes to user.
                   cache.put(event.request.url, networkResponse.clone());
                   
-                  // Return the response to the user so that they get what they requested
+                  // Return response to the user so that they get what they requested
                   return networkResponse;
                 })
             })
@@ -205,11 +209,11 @@ self.addEventListener('activate', event => {
         }
       })
   )
-});*/ // End DYNAMIC CACHING Strategy
+}); // End DYNAMIC CACHING Strategy*/
 
 
 
-
+// Currently not in use
 //  USE CASE: User triggers a fetch event
 //    --When the user triggers a fetch event, such as an
 //        article on a news site which you want to save and access
@@ -217,6 +221,8 @@ self.addEventListener('activate', event => {
 //    --To do this, we need to temporarily turn off our dynamic caching
 //        (cache.put()) because if it's turned on, we can't simulate
 //        this because we are caching everything anyway.
+/*
+
 self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
   // We want to respond with our cached assets
@@ -239,7 +245,7 @@ self.addEventListener('fetch', event => {
                   return caches.open(DYNAMIC_CACHE)
                                .then(cache => {
                                  // Temporarily disable cache.put() to simulate Use Case
-                                  /*cache.put(event.request.url, networkResponse.clone());*/
+                                  /!*cache.put(event.request.url, networkResponse.clone());*!/
               
                                  // Return the response to the user
                                  //      so that they get what they requested
@@ -252,5 +258,59 @@ self.addEventListener('fetch', event => {
             }
           })
   )
-});
+});  // End Cache on Demand. Use Case: button triggers caching
 
+*/
+
+
+
+
+// DYNAMIC CACHING with OFFLINE FALLBACK PAGE Strategy
+self.addEventListener('fetch', event => {
+  // console.log('Service Worker - fetch event - Dynamic Caching', event);
+  // We want to respond with our cached assets
+  event.respondWith(
+    caches.match(event.request)
+          .then(response => {
+            // The parameter response is null if there is no match
+            if(response) {
+              return response;
+            } else {
+              // Dynamic Caching begins here
+              // We return the event.request as usual, but we also...
+              //  -- open/create a dynamic cache and..
+              //  -- store the event request that was not in the Static Cache
+              // into the new Dynamic Cache for later offline-first capabilities
+              return fetch(event.request)
+                .then(networkResponse => {
+                  // If you don't return caches.open, caches.put() will not do much
+                  return caches.open(DYNAMIC_CACHE)
+                               .then(cache => {
+                                 // Store the item in dynamic cache with a clone because..
+                                 // we can only use each parameter/response Once
+                                 // Network response is stored in cache and the other goes to user.
+                                 cache.put(event.request.url, networkResponse.clone());
+              
+                                 // Return response to the user to get what they requested
+                                 return networkResponse;
+                               })
+                })
+                .catch(error => {
+                  // Implement Fallback Page Strategy here:
+                  console.log('Service Worker -- Error: ', error);
+                  return caches.open(STATIC_CACHE)
+                    .then(cache => {
+                      // Get the Offline Fallback page and return it
+                      // The command for getting something is cache.match()
+                      // Drawback is whenever we make an HTTP request where we can't get a valid
+                      //    return value, we will return to this page.
+                      //   - This has a bad side effect that if at some point some other request
+                      //   like fetching JSON from a url we can't reach, this will also be returned
+                      //   Fine tuning required - will modify depending on route of resource, etc..
+                      return cache.match('/offline.html')
+                    })
+                })
+            }
+          })
+  )
+}); // End DYNAMIC CACHING with Offline Fallback Page Strategy
