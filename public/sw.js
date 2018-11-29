@@ -291,8 +291,9 @@ self.addEventListener('fetch', event => {
 
 
 
-
+// Currently not in use
 // DYNAMIC CACHING with OFFLINE FALLBACK PAGE Strategy
+/*
 self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
   // We want to respond with our cached assets
@@ -341,3 +342,24 @@ self.addEventListener('fetch', event => {
           })
   )
 }); // End DYNAMIC CACHING with Offline Fallback Page Strategy
+*/
+
+
+
+// NETWORK with CACHE FALLBACK Strategy
+// Plus:  We serve updated content first
+// Drawbacks:  -We do not take advantage of the faster response with a cache first strategy.
+//             - If a fetch fails, the Network does not respond instantly;
+//              this is especially problematic with LIE-FI
+//             (ie. a request may timeout in 60 sec where user would have to wait a full 60 sec
+//             before you reach out to the backup cache == Terrible user experience)
+self.addEventListener('fetch', event => {
+  // We want to first respond with our network request first
+
+  event.respondWith(
+    fetch(event.request)
+      .catch(error => {
+        return caches.match(event.request)
+      })
+  )
+}); // End of NETWORK with CACHE FALLBACK Strategy
