@@ -353,13 +353,14 @@ self.addEventListener('fetch', event => {
 //              this is especially problematic with LIE-FI
 //             (ie. a request may timeout in 60 sec where user would have to wait a full 60 sec
 //             before you reach out to the backup cache == Terrible user experience)
+// Use Case:  For assets which you can fetch in the background
+//     that do not have to be used immediately
 self.addEventListener('fetch', event => {
-  // We want to first respond with our network request first
-
+  // We want to first respond with our network and then fall back to the cache if no connection
   event.respondWith(
     fetch(event.request)
       .catch(error => {
         return caches.match(event.request)
       })
-  )
+  );
 }); // End of NETWORK with CACHE FALLBACK Strategy
