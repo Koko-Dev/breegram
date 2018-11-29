@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v6';
-const DYNAMIC_CACHE = 'dynamic-v6';
+const STATIC_CACHE = 'static-v7';
+const DYNAMIC_CACHE = 'dynamic-v7';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -15,11 +15,11 @@ const STATIC_FILES = [
   '/src/css/feed.css',
   '/src/css/help.css',
   '/help/index.html',
-  '/src/images/breeGrams1.jpeg',
   '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
   'https://fonts.googleapis.com/icon?family=Material+Icons'
 ];
+
 
 
 // install and activate are triggered by the Browser
@@ -108,7 +108,7 @@ self.addEventListener('activate', event => {
           }
         }))
       })
-  );
+  );  // end waitUntil()
   
   /*
     From: https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
@@ -211,10 +211,12 @@ self.addEventListener('activate', event => {
 
 
 //  USE CASE: User triggers a fetch event
-//    --When the user triggers a fetch event, such as an article on a news site which
-//      you want to access later, perhaps even offline.
-//    -- To do this, we need to temporarily turn off our dynamic caching because
-//      if it's turned on, we can't simulate this because we are caching everything anyway.
+//    --When the user triggers a fetch event, such as an
+//        article on a news site which you want to save and access
+//        later, perhaps even offline.
+//    --To do this, we need to temporarily turn off our dynamic caching
+//        (cache.put()) because if it's turned on, we can't simulate
+//        this because we are caching everything anyway.
 self.addEventListener('fetch', event => {
   // console.log('Service Worker - fetch event - Dynamic Caching', event);
   // We want to respond with our cached assets
@@ -228,21 +230,19 @@ self.addEventListener('fetch', event => {
               // Dynamic Caching begins here
               // We return the event.request as usual, but we also...
               //    -- open/create a dynamic cache and..
-              //    -- store the event request that was not in the Static Cache
-              //     into the new Dynamic Cache for later offline-first capabilities
+              //    -- store the event request that was not in the
+              //       Static Cache into the new Dynamic Cache
+              //       for later offline-first capabilities
               return fetch(event.request)
                 .then(networkResponse => {
                   // If you don't return caches.open, caches.put() will not do much
                   return caches.open(DYNAMIC_CACHE)
                                .then(cache => {
-                                 // Store the item in dynamic cache with a clone because..
-                                 //   we can only use each parameter/response Once
-                                 //  One network response is stored in cache and the other goes to user.
-                                 
                                  // Temporarily disable cache.put() to simulate Use Case
                                   /*cache.put(event.request.url, networkResponse.clone());*/
               
-                                 // Return the response to the user so that they get what they requested
+                                 // Return the response to the user
+                                 //      so that they get what they requested
                                  return networkResponse;
                                })
                 })

@@ -70,6 +70,21 @@ closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 // Receives the event from addEventListener click event
 function onSaveButtonClicked(event) {
   console.log('Clicked');
+  
+  // Check to make sure Browser accepts the Cache API
+  // We can add an else statement that removes the button if
+  //    the browser does not support caching later
+  if('caches' in window) {
+    // Set up a cache for user prompted events
+    caches.open('user-requested')
+          .then(cache => {
+            // store the assets
+            cache.add('https://httpbin.org/get');
+            cache.add('/src/images/breeGrams1.jpeg');
+          })
+  }
+  
+  
 }
 
 
@@ -83,12 +98,12 @@ function createCard() {
   cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
   cardImage.style.backgroundSize = 'cover';
   cardImage.style.height = '180px';
+  
   cardWrapper.appendChild(cardImage);
   
   let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   cardTitleTextElement.textContent = 'Bronx Trip';
-  
   cardTitleTextElement.style.color = "#F7F3EE";
   cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
   cardTitleTextElement.style.fontWeight = '700';
@@ -118,6 +133,7 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
+// If this fake get request fails, then createCard() does not happen here
 fetch('https://httpbin.org/get')
   .then(function(res) {
     return res.json();
