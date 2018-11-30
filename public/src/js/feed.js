@@ -70,7 +70,8 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 // Currently not in use; allows to save assets in cache on demand otherwise
 // For clicked button to save Card
 // Receives the event from addEventListener click event
-/*function onSaveButtonClicked(event) {
+/*
+function onSaveButtonClicked(event) {
   console.log('Clicked');
   
   // Check to make sure Browser accepts the Cache API
@@ -86,6 +87,18 @@ shareImageButton.addEventListener('click', openCreatePostModal);
           })
   }
 }*/
+
+// Helper function to clear the last card
+function clearCards() {
+  
+  // sharedMomentsArea are where cards are appended (#shared-moments)
+  // while-loop will remove one child at a time and,
+  //       once all children are removed, it quits
+  while(sharedMomentsArea.hasChildNodes()){
+    // Removes the last child and once all are removed it's done
+    sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+  }
+}
 
 
 
@@ -135,11 +148,44 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
+
+
+const url = 'https://httpbin.org/get';
+let networkDataReceived = false;
+
+
+
+ // Getting the card from the Network
 // If this fake get request fails, then createCard() does not happen here
-fetch('https://httpbin.org/get')
-  .then(function(res) {
-    return res.json();
+fetch(url)
+  .then(networkResponse => {
+    return networkResponse.json();
   })
-  .then(function(data) {
+  .then(data => {
+    networkDataReceived = true;
+    console.log('From Web', data), networkDataReceived;
+    clearCards();
     createCard();
-  });
+});
+
+
+
+// Getting the card from the Cache
+// For Cache first and Network with Dynamic Caching
+if('caches' in window) {
+  caches.match(url)
+        .then(response => {
+          if(response) {
+            return response.json();
+          }
+        })
+        .then(data => {
+          console.log('[feed.js] From Cache', data);
+          
+          // Only create the care if networkDataReceived is false
+          if(!networkDataReceived) {
+            clearCards();
+            createCard();
+          }
+        });
+}
