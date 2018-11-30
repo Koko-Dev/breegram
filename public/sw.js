@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v15';
-const DYNAMIC_CACHE = 'dynamic-v15';
+const STATIC_CACHE = 'static-v16';
+const DYNAMIC_CACHE = 'dynamic-v16';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -137,6 +137,23 @@ self.addEventListener('activate', event => {
 
 
 
+// Helper function for fetch event Static Cache Asset request.url
+function isInArray(string, array) {
+  let cachePath;
+  
+  // Request targets domain where we serve the page from (i.e. NOT a CDN)
+  if (string.indexOf(self.origin) === 0) {
+    console.log('matched ', string);
+    
+    // Take the part of the URL AFTER the domain (e.g. after localhost:8080)
+    cachePath = string.substring(self.origin.length);
+  } else {
+    // store the full request (for CDNs)
+    cachePath = string;
+  }
+  return array.indexOf(cachePath) > -1;
+}
+
 
 //  Cache, then Network for 'https://httpbin.org/get' use to create card along with
 //  Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
@@ -162,6 +179,12 @@ self.addEventListener('fetch', event => {
                   return networkResponse;
                 })
             })
+    )
+  } else if(isInArray(event.request.url, STATIC_FILES)) {
+    // Use Case: Use Cache Only Strategy if event.request.url is in static cache.
+    // Since the service worker uses version control, the main assets in shell will be current
+    event.respondWith(
+      caches.match(event.request)
     )
   } else {
     // Use Dynamic Caching with Offline Fallback Page Strategy
