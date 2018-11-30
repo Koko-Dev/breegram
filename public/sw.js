@@ -203,7 +203,16 @@ self.addEventListener('fetch', event => {
                                    //   - This has a bad side effect that if at some point some other request
                                    //   like fetching JSON from a url we can't reach, this will also be returned
                                    //   Fine tuning required - will modify depending on route of resource, etc..
-                                   return cache.match('/offline.html')
+                                   
+                                   if(event.request.url.indexOf('/help') > -1) {
+                                     // if the event.request.url contains /help, then
+                                     //   then I know that it tried and failed to load
+                                     //   the help page.  Return offline.html instead
+                                     //   which gives the option to redirect to root page
+                                     //   which was pre-cached in the install event
+                                     return cache.match('/offline.html')
+                                   }
+                                   
                                  })
                   })
               }
