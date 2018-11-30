@@ -157,13 +157,16 @@ let networkDataReceived = false;
 
  // Getting the card from the Network
 // If this fake get request fails, then createCard() does not happen here
+// This kicks off our Cache, then Network Strategy and
+//   must be loaded first.  Ensure this in SW fetch event.
 fetch(url)
   .then(networkResponse => {
     return networkResponse.json();
   })
   .then(data => {
+    // Does not get here if no network response
     networkDataReceived = true;
-    console.log('From Web', data), networkDataReceived;
+    console.log('From Web', data);
     clearCards();
     createCard();
 });
@@ -180,10 +183,9 @@ if('caches' in window) {
           }
         })
         .then(data => {
-          console.log('[feed.js] From Cache', data);
-          
-          // Only create the care if networkDataReceived is false
+          // Only create the card if networkDataReceived is false
           if(!networkDataReceived) {
+            console.log('[feed.js] From Cache', data);
             clearCards();
             createCard();
           }

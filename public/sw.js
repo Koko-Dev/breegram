@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v8';
-const DYNAMIC_CACHE = 'dynamic-v8';
+const STATIC_CACHE = 'static-v15';
+const DYNAMIC_CACHE = 'dynamic-v15';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -136,6 +136,115 @@ self.addEventListener('activate', event => {
 
 
 
+
+
+//  Cache, then Network for 'https://httpbin.org/get' use to create card along with
+//  Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
+//       for all other assets
+self.addEventListener('fetch', event => {
+  // Check which kind of request we are making
+  // We only want to use the Cache then Network strategy with url used to create card
+  // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
+  const url = 'https://httpbin.org/get';
+  
+  // Check to see if event.request.url contains this string ('https://httpbin.org/get')
+  // If it does not then conditional is not greater than -1 (is -1)
+  // If conditional is true, then we want to use the Cache, then Network Strategy
+  if(event.request.url.indexOf(url) > -1) {
+    event.respondWith(
+      caches.open(DYNAMIC_CACHE)
+            .then(cache => {
+              // Initially this cache is empty because we have not visited pages
+              // NOTE: This intercepts requests from feed.js
+              return fetch(event.request)
+                .then(networkResponse => {
+                  cache.put(event.request.url,  networkResponse.clone());
+                  return networkResponse;
+                })
+            })
+    )
+  } else {
+    // Use Dynamic Caching with Offline Fallback Page Strategy
+    event.respondWith(
+      caches.match(event.request)
+            .then(response => {
+              // The parameter response is null if there is no match
+              if(response) {
+                return response;
+              } else {
+                // Dynamic Caching begins here
+                // We return the event.request as usual, but we also...
+                //  -- open/create a dynamic cache and..
+                //  -- store the event request that was not in the Static Cache
+                // into the new Dynamic Cache for later offline-first capabilities
+                return fetch(event.request)
+                  .then(networkResponse => {
+                    // If you don't return caches.open, caches.put() will not do much
+                    return caches.open(DYNAMIC_CACHE)
+                                 .then(cache => {
+                                   // Store the item in dynamic cache with a clone because..
+                                   // we can only use each parameter/response Once
+                                   // Network response is stored in cache and the other goes to user.
+                                   cache.put(event.request.url, networkResponse.clone());
+            
+                                   // Return response to the user to get what they requested
+                                   return networkResponse;
+                                 })
+                  })
+                  .catch(error => {
+                    // Implement Fallback Page Strategy here:
+                    console.log('Service Worker -- Error: ', error);
+                    return caches.open(STATIC_CACHE)
+                                 .then(cache => {
+                                   // Get the Offline Fallback page and return it
+                                   // The command for getting something is cache.match()
+                                   // Drawback is whenever we make an HTTP request where we can't get a valid
+                                   //    return value, we will return to this page.
+                                   //   - This has a bad side effect that if at some point some other request
+                                   //   like fetching JSON from a url we can't reach, this will also be returned
+                                   //   Fine tuning required - will modify depending on route of resource, etc..
+                                   return cache.match('/offline.html')
+                                 })
+                  })
+              }
+            })
+    )
+  }  // End Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
+});  // End CACHE, then NETWORK with Dynamic Caching Strategy
+
+
+
+
+// Currently not in use
+// CACHE then NETWORK with Dynamic Caching Strategy
+// NOT offline-first
+// The idea here is the get an asset as quickly as possible from the cache or network,
+//    whichever is fastest while simultaneously going through the network
+//    (implemented in feed.js) and implementing Dynamic caching in the Service Worker
+// NOTE: This intercepts all fetch requests, including the network request in feed.js
+// If we don't get it from the cache and we can't get it from the network, no-can-do
+// NOTE 2: Because we are going through Dynamic Cache, we are updating assets
+//       BUT, this breaks offline first. Must modify
+/*
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.open(DYNAMIC_CACHE)
+          .then(cache => {
+            // Initially this cache is empty because we have not visited pages
+            // NOTE: This intercepts requests from feed.js
+            return fetch(event.request)
+              .then(networkResponse => {
+                cache.put(event.request.url,  networkResponse.clone());
+                return networkResponse;
+              })
+          })
+  )
+});  // End CACHE, then NETWORK with Dynamic Caching Strategy
+
+*/
+
+
+// Currently not in use
 // CACHE ONLY
 /*
 self.addEventListener('fetch', event => {
@@ -148,6 +257,7 @@ self.addEventListener('fetch', event => {
 
 
 
+// Currently not in use
 // NETWORK ONLY STRATEGY -- no need for a service worker really
 //  -- This would make sense for some resources which we will split up
 //     when we parse an incoming request to funnel some through when
@@ -161,7 +271,7 @@ self.addEventListener('fetch', event => {
 */
 
 
-
+// Currently not in use
   /* PRE-CACHING Only Strategy
     - fetch is triggered by the web application
  */
@@ -237,6 +347,7 @@ self.addEventListener('fetch', event => {
       })
   )
 }); // End DYNAMIC CACHING Strategy*/
+
 
 
 
@@ -370,6 +481,7 @@ self.addEventListener('fetch', event => {
 
 
 // NETWORK FIRST, then DYNAMIC, then CACHE FALLBACK Strategy
+/*
 self.addEventListener('fetch', event => {
   // Network First
   event.respondWith(
@@ -388,4 +500,9 @@ self.addEventListener('fetch', event => {
       })
   )
 });   // End NETWORK FIRST, then DYNAMIC WITH CACHE FALLBACK Strategy
+
+*/
+
+
+
 
