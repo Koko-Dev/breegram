@@ -151,15 +151,40 @@ function createCard() {
 
 
 const url = 'https://httpbin.org/get';
+const posturl = 'https://httpbin.org/post';
 let networkDataReceived = false;
 
 
-
- // Getting the card from the Network
-// If this fake get request fails, then createCard() does not happen here
+// Creates the card via a pseudo get request
+// Getting the card from the Network
+// If this pseudo get request fails, then createCard() does not happen here
 // This kicks off our Cache, then Network Strategy and
 //   must be loaded first.  Ensure this in SW fetch event.
-fetch(url)
+/*fetch(url)
+  .then(response => {
+    return response.json();
+  })
+  .then(data => {
+    networkDataReceived = true;
+    console.log('From Web', data);
+    clearCards();
+    createCard();
+});*/
+
+
+// Theoretically, you can't store this post request in the cache with this code
+// It is storing the Response of the Post Request in the Dynamic Cache
+// It is not storing the Post request itself, just what we got back (response)
+// So, it does not work for offline-first
+// But, it is still able to render the card because we find the matching url in the cache
+fetch(posturl, {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  body: JSON.stringify({message: 'Some Message'})
+})
   .then(networkResponse => {
     return networkResponse.json();
   })
