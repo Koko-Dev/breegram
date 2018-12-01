@@ -219,6 +219,7 @@ self.addEventListener('fetch', event => {
                     console.log('Service Worker -- Error: ', error);
                     return caches.open(STATIC_CACHE)
                                  .then(cache => {
+                                   
                                    // Get the Offline Fallback page and return it
                                    // The command for getting something is cache.match()
                                    // Drawback is whenever we make an HTTP request where we can't get a valid
@@ -226,7 +227,7 @@ self.addEventListener('fetch', event => {
                                    //   - This has a bad side effect that if at some point some other request
                                    //   like fetching JSON from a url we can't reach, this will also be returned
                                    //   Fine tuning required - will modify depending on route of resource, etc..
-                                   
+                                   /*
                                    if(event.request.url.indexOf('/help') > -1) {
                                      // if the event.request.url contains /help, then
                                      //   then I know that it tried and failed to load
@@ -235,7 +236,14 @@ self.addEventListener('fetch', event => {
                                      //   which was pre-cached in the install event
                                      return cache.match('/offline.html')
                                    }
+                                   */
                                    
+                                   // An improved conditional
+                                   // As I add more pages, would have needed to add conditions
+                                   // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
+                                   if (event.request.headers.get('accept').includes('text/html')) {
+                                     return cache.match('/offline.html');
+                                   }
                                  })
                   })
               }
@@ -384,6 +392,7 @@ self.addEventListener('fetch', event => {
 
 
 // Currently not in use
+// Cache, then Dynamic Cache, then Network
 //  USE CASE: User triggers a fetch event
 //    --When the user triggers a fetch event, such as an
 //        article on a news site which you want to save and access
