@@ -31,12 +31,27 @@ function openCreatePostModal() {
       } else {
         console.log('User added banner to the home screen')
       }
-    })
+    });
     
     // Set promptDeferment equal to null because you only have one shot to prompt the user
     //      to install the banner.  They can enable banner manually if they canceled installation
     promptDeferment = null;
   }
+  
+  // For testing purposes, unregister the Service Worker when plus is clicked
+  // In Applications/Service Worker tab, as soon as plus button is clicked
+  //     it will show that the Service Worker has been deleted
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations => {
+        for(let i = 0; i <registrations.length; i++) {
+          registrations[i].unregister();
+        }
+      })
+  }
+  
+  
+  
 }
 
 
