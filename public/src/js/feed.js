@@ -102,6 +102,7 @@ function clearCards() {
 
 
 
+// Creates the cards
 function createCard() {
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';

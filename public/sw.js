@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v16';
-const DYNAMIC_CACHE = 'dynamic-v16';
+const STATIC_CACHE = 'static-v21';
+const DYNAMIC_CACHE = 'dynamic-v21';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -22,6 +22,35 @@ const STATIC_FILES = [
   '/src/images/breeGrams1.jpeg',
   '/offline.html'
 ];
+
+
+
+/*
+
+  Helper function to trim the Dynamic Cache
+    - The is a recursive function which quits when the amount of elements is
+      less than or equal to maxItems
+    - This function is called
+
+ @param {string} cacheName - The name of the Cache to trim
+ @param {number} maxItems - The maximum number of items allowed to stay in the cache
+ 
+*/
+function trimCache(cacheName, maxItems) {
+  caches.open(cacheName)
+    .then(cache => {
+      // returns an Array of all of the request.urls (strings) stored as keys
+      return cache.keys()
+        .then(cacheKeys => {
+          if(cacheKeys.length > maxItems) {
+            // Remove the oldest item, which would be the first element in the Array
+            cache.delete(cacheKeys[0])
+                 .then(trimCache(cacheName, maxItems))
+          }
+        })
+    })
+    
+}
 
 
 
@@ -137,7 +166,13 @@ self.addEventListener('activate', event => {
 
 
 
-// Helper function for fetch event Static Cache Asset request.url
+/*
+  Helper function for fetch event Static Cache Asset request.url
+  
+  @param {string} string - The event.request.url
+  @param {Array} array - The STATIC_FILES Array containing strings of the main request.url assets
+  
+*/
 function isInArray(string, array) {
   let cachePath;
   
@@ -175,6 +210,8 @@ self.addEventListener('fetch', event => {
               // NOTE: This intercepts requests from feed.js
               return fetch(event.request)
                 .then(networkResponse => {
+                  trimCache(DYNAMIC_CACHE, 6);
+                  console.log('Trimmed the Cache');
                   cache.put(event.request.url,  networkResponse.clone());
                   return networkResponse;
                 })
@@ -205,6 +242,8 @@ self.addEventListener('fetch', event => {
                     // If you don't return caches.open, caches.put() will not do much
                     return caches.open(DYNAMIC_CACHE)
                                  .then(cache => {
+                                   trimCache(DYNAMIC_CACHE, 6);
+                                   console.log('Trimmed the Cache in else');
                                    // Store the item in dynamic cache with a clone because..
                                    // we can only use each parameter/response Once
                                    // Network response is stored in cache and the other goes to user.
