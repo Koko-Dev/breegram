@@ -210,7 +210,7 @@ self.addEventListener('fetch', event => {
               // NOTE: This intercepts requests from feed.js
               return fetch(event.request)
                 .then(networkResponse => {
-                  trimCache(DYNAMIC_CACHE, 3);
+                  trimCache(DYNAMIC_CACHE, 7);
                   console.log('Trimmed the Cache');
                   cache.put(event.request.url,  networkResponse.clone());
                   return networkResponse;
@@ -242,7 +242,7 @@ self.addEventListener('fetch', event => {
                     // If you don't return caches.open, caches.put() will not do much
                     return caches.open(DYNAMIC_CACHE)
                                  .then(cache => {
-                                   trimCache(DYNAMIC_CACHE, 3);
+                                   trimCache(DYNAMIC_CACHE, 7);
                                    console.log('Trimmed the Cache in else');
                                    // Store the item in dynamic cache with a clone because..
                                    // we can only use each parameter/response Once
