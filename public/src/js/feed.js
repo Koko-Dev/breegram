@@ -41,6 +41,7 @@ function openCreatePostModal() {
   // For testing purposes, unregister the Service Worker when plus is clicked
   // In Applications/Service Worker tab, as soon as plus button is clicked
   //     it will show that the Service Worker has been deleted
+  /*
   if('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations()
       .then(registrations => {
@@ -49,9 +50,7 @@ function openCreatePostModal() {
         }
       })
   }
-  
-  
-  
+  */
 }
 
 
