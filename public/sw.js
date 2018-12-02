@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'static-v27';
-const DYNAMIC_CACHE = 'dynamic-v27';
+const STATIC_CACHE = 'static-v30';
+const DYNAMIC_CACHE = 'dynamic-v30';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -75,13 +75,13 @@ function trimCache(cacheName, maxItems) {
 
 // The install event is the best place to cache static assets
 self.addEventListener('install', function (event) {
-  console.log('[Service Worker] Installing Service Worker ...', event);
+  // console.log('[Service Worker] Installing Service Worker ...', event);
   // waitUntil() ensures caches.open() finishes loading
   //     before installation process is complete
   event.waitUntil(
     caches.open(STATIC_CACHE)
           .then(cache => {
-            console.log('[Service Worker] Pre-Caching App Shell');
+            // console.log('[Service Worker] Pre-Caching App Shell');
             
             // addAll() takes an Array of strings identifying the request.url's
             //  we want to cache,  but will fail all if even one request.url fails.
@@ -101,7 +101,7 @@ self.addEventListener('install', function (event) {
  *      At that point it is safe to update caches and remove old ones.
  *      */
 self.addEventListener('activate', event => {
-  console.log('[Service Worker] Activating Service Worker ...', event);
+  // console.log('[Service Worker] Activating Service Worker ...', event);
   
   /* First, we want to wait until we are done with the cleanup
            before we continue, so we use waitUntil()
@@ -114,7 +114,7 @@ self.addEventListener('activate', event => {
     // i.e. ['static-v3', 'static-v4', 'dynamic-v3', 'dynamic-v4']
     caches.keys()
       .then(keyList => {
-        console.log('Service Worker', keyList);
+        // console.log('Service Worker', keyList);
         
         // Promise.all() takes an Array of Promises and waits for them all to finish
         // Using this so that we only return from this function once we are really
@@ -178,7 +178,7 @@ function isInArray(string, array) {
   
   // Request targets domain where we serve the page from (i.e. NOT a CDN)
   if (string.indexOf(self.origin) === 0) {
-    console.log('matched ', string);
+    // console.log('matched ', string);
     
     // Take the part of the URL AFTER the domain (e.g. after localhost:8080)
     cachePath = string.substring(self.origin.length);
@@ -197,7 +197,8 @@ self.addEventListener('fetch', event => {
   // Check which kind of request we are making
   // We only want to use the Cache then Network strategy with url used to create card
   // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
-  const url = 'https://httpbin.org/get';
+  // const url = 'https://httpbin.org/get';
+  const url = 'https://breegram-instagram.firebaseio.com/posts';
   
   // Check to see if event.request.url contains this string ('https://httpbin.org/get')
   // If it does not then conditional is not greater than -1 (is -1)

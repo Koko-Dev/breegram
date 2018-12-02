@@ -116,14 +116,16 @@ function clearCards() {
 
 
 
-// Creates the cards
-function createCard() {
+// Creates the cards based on data from  get request to firebase database of posts
+function createCard(data) {
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   
   let cardImage = document.createElement('div');
   cardImage.className = 'mdl-card__title';
-  cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
+  // cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
+  cardImage.style.backgroundImage =  'url(' + data.image + ')';
+  
   cardImage.style.backgroundSize = 'cover';
   cardImage.style.height = '180px';
   
@@ -131,7 +133,8 @@ function createCard() {
   
   let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
-  cardTitleTextElement.textContent = 'Bronx Trip';
+  // cardTitleTextElement.textContent = 'Bronx Trip';
+  cardTitleTextElement.textContent = data.title;
   cardTitleTextElement.style.color = "#F7F3EE";
   cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
   cardTitleTextElement.style.fontWeight = '700';
@@ -141,7 +144,8 @@ function createCard() {
   
   let cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'Bronx, NY';
+  // cardSupportingText.textContent = 'Bronx, NY';
+  cardSupportingText.textContent = data.location;
   cardSupportingText.style.textAlign = 'center';
   cardSupportingText.style.color = '#5B5E6F';
   cardSupportingText.style.textShadow = '1px 1px #9F9997';
@@ -167,24 +171,94 @@ function createCard() {
 
 const url = 'https://httpbin.org/get';
 const posturl = 'https://httpbin.org/post';
+const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
 let networkDataReceived = false;
 
 
-// Creates the card via a pseudo get request
+/*
+*   A helper function to create cards dynamically via firebase database
+*     based on the data fetched fro the firebase database of posts
+*
+*   @param {Array} data -  An array of posts from firebase database
+*                       - originally an object, we converted it to an array
+*
+* */
+function updateUI(data) {
+  // First the last card
+  clearCards();
+  console.log('[feed.js]');
+
+// Loops through the posts in the firebase database and calls createCard for each post
+  for(let i = 0; i < data.length; i++) {
+    createCard(data[i]);
+  }
+}
+
+
+
+// Creates the card via a get request for firebase database of posts
 // Getting the card from the Network
-// If this pseudo get request fails, then createCard() does not happen here
+// If this get request fails, then createCard() does not happen here
 // This kicks off our Cache, then Network Strategy and
 //   must be loaded first.  Ensure this in SW fetch event.
-/*fetch(url)
+fetch(firebase_posts)
   .then(response => {
     return response.json();
   })
   .then(data => {
     networkDataReceived = true;
-    console.log('From Web', data);
-    clearCards();
-    createCard();
-});*/
+    // clearCards();
+    // createCard();
+    
+    // Creates the Card dynamically by looping through the firebase object 'posts'
+    // Since the data from firebase is an Object we will convert the data into an Array
+    //   in order to e able to loop through each post in updateUI
+    dataArray = [];
+    for(let key in data) {
+      console.log('[feed.js] key: ', key);
+  
+      dataArray.push(data[key]);
+    }
+    
+    console.log('[feed.js] Array of  Posts in firebase from the WEB', dataArray);
+    
+    updateUI(dataArray);
+  
+  });
+
+
+
+// Getting the card from the Cache
+// For Cache first and Network with Dynamic Caching
+if('caches' in window) {
+  caches.match(firebase_posts)
+        .then(response => {
+          if(response) {
+            return response.json();
+          }
+        })
+        .then(data => {
+          // Only create the card if networkDataReceived is false
+          if(!networkDataReceived) {
+            // clearCards();
+            // createCard();
+  
+            // Creates the Card dynamically by looping through the firebase object 'posts'
+            // Since the data from firebase is an Object we will convert the data into an Array
+            //   in order to e able to loop through each post in updateUI
+            dataArray = [];
+            for(let key in data) {
+              console.log('[feed.js] key: ', key);
+              dataArray.push(data[key]);
+            }
+  
+            console.log('[feed.js] Array of Posts in firebase from the CACHE', dataArray);
+  
+  
+            updateUI(dataArray);
+          }
+        });
+}
 
 
 // Theoretically, you can't store this post request in the cache with this code
@@ -192,6 +266,7 @@ let networkDataReceived = false;
 // It is not storing the Post request itself, just what we got back (response)
 // So, it does not work for offline-first
 // But, it is still able to render the card because we find the matching url in the cache
+/*
 fetch(posturl, {
   method: "POST",
   headers: {
@@ -211,23 +286,7 @@ fetch(posturl, {
     createCard();
 });
 
+*/
 
 
-// Getting the card from the Cache
-// For Cache first and Network with Dynamic Caching
-if('caches' in window) {
-  caches.match(url)
-        .then(response => {
-          if(response) {
-            return response.json();
-          }
-        })
-        .then(data => {
-          // Only create the card if networkDataReceived is false
-          if(!networkDataReceived) {
-            console.log('[feed.js] From Cache', data);
-            clearCards();
-            createCard();
-          }
-        });
-}
+
