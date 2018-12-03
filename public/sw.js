@@ -1,5 +1,8 @@
-const STATIC_CACHE = 'static-v30';
-const DYNAMIC_CACHE = 'dynamic-v30';
+
+importScripts('/src/js/idb.js');
+
+const STATIC_CACHE = 'static-v31';
+const DYNAMIC_CACHE = 'dynamic-v31';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -7,6 +10,7 @@ const STATIC_FILES = [
   '/index.html',
   '/src/js/app.js',
   '/src/js/feed.js',
+  '/src/js/idb.js',
   '/src/js/promise.js',
   '/src/js/fetch.js',
   '/src/material-design/material.min.js',
@@ -14,12 +18,8 @@ const STATIC_FILES = [
   '/src/css/app.css',
   '/src/css/feed.css',
   '/src/css/help.css',
-  '/help/index.html',
-  '/src/images/parkour-main.jpg',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
-  'https://httpbin.org/get',
-  '/src/images/breeGrams1.jpeg',
   '/offline.html'
 ];
 
