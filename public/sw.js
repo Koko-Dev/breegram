@@ -1,8 +1,8 @@
 
 importScripts('/src/js/idb.js');
 
-const STATIC_CACHE = 'static-v31';
-const DYNAMIC_CACHE = 'dynamic-v31';
+const STATIC_CACHE = 'static-v32';
+const DYNAMIC_CACHE = 'dynamic-v32';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -22,6 +22,12 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   '/offline.html'
 ];
+
+const dbPromise = idb.open('posts-store', 1, db => {
+  if(!db.objectStoreNames.contains('posts')) {
+    db.createObjectStore('posts', {keyPath: 'id', autoIncrement: true});
+  }
+});
 
 
 
@@ -57,15 +63,18 @@ function trimCache(cacheName, maxItems) {
 // install and activate are triggered by the Browser
 /*self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Service Worker ... ', event);
+  
   // caches.open() returns a promise --
   //    it  opens cache if it exists, or creates cache if doesn't
   // Note: The install event does not wait for caches.open() to load.
   //    To ensure it does, we use the waitUntil() method, which
   //    returns a promise, and install event now won't finish installation process
   //       until caches.open() has completed loading.
+  
   event.waitUntil(caches.open(STATIC_FILES)
     .then(theStaticCache => {
       console.log('[Service Worker] Pre-caching App Shell');
+      
       return theStaticCache.addAll(STATIC_FILES);
     }))
   
@@ -140,7 +149,7 @@ self.addEventListener('activate', event => {
           }
         }))
       })
-  );  // end waitUntil()
+  );  // end waitUntil() in activate event
   
   /*
     From: https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
@@ -190,9 +199,129 @@ function isInArray(string, array) {
 }
 
 
+
+self.addEventListener('fetch', event => {
+  // Check which kind of request we are making
+  // We only want to use the Cache then Network strategy with url used to create card
+  // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
+  // const url = 'https://httpbin.org/get';
+  const url = 'https://breegram-instagram.firebaseio.com/posts';
+  
+  // Check to see if event.request.url contains this string ('https://httpbin.org/get')
+  // If it does not then conditional is not greater than -1 (is -1)
+  // If conditional is true, then we want to use the Cache, then Network Strategy
+  if(event.request.url.indexOf(url) > -1) {
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          // Store the network response in indexedDB posts store
+          // Create a copy of the network response because Promises only allows for one use
+          let response = networkResponse.clone();
+          
+          // Store the response in indexedDB - .json() returns a Promise
+          response.json()
+            .then(data => {
+              // The keys are the post ids from firebase database
+              for(let key in data) {
+                // Loop through the posts in firebase database, store in indexedDB
+                // Open database
+                dbPromise
+                  .then(db => {
+                    // Store post in 'posts' object store
+                    let tx = db.transaction('posts', 'readwrite');
+                    let store = tx.objectStore('posts');
+                    store.put(data[key]);
+                    return tx.complete;
+                  })
+              } // end for loop
+            });
+          return networkResponse;
+        })
+    ) // end event.responseWith()
+  } else if(isInArray(event.request.url, STATIC_FILES)) {
+    // Use Case: Use Cache Only Strategy if event.request.url is in static cache.
+    // Since the service worker uses version control, the main assets in shell will be current
+    event.respondWith(
+      caches.match(event.request)
+    )
+  } else {
+    // Use Dynamic Caching with Offline Fallback Page Strategy
+    event.respondWith(
+      caches.match(event.request)
+            .then(response => {
+              // The parameter response is null if there is no match
+              if(response) {
+                return response;
+              } else {
+                // Dynamic Caching begins here
+                // We return the event.request as usual, but we also...
+                //  -- open/create a dynamic cache and..
+                //  -- store the event request that was not in the Static Cache
+                // into the new Dynamic Cache for later offline-first capabilities
+                return fetch(event.request)
+                  .then(networkResponse => {
+                    // If you don't return caches.open, caches.put() will not do much
+                    return caches.open(DYNAMIC_CACHE)
+                                 .then(cache => {
+                                   // trimCache(DYNAMIC_CACHE, 7);
+                                   console.log('Trimmed the Cache in else');
+                                   // Store the item in dynamic cache with a clone because..
+                                   // we can only use each parameter/response Once
+                                   // Network response is stored in cache and the other goes to user.
+                                   cache.put(event.request.url, networkResponse.clone());
+                
+                                   // Return response to the user to get what they requested
+                                   return networkResponse;
+                                 })
+                  })
+                  .catch(error => {
+                    // Implement Fallback Page Strategy here:
+                    console.log('Service Worker -- Error: ', error);
+                    return caches.open(STATIC_CACHE)
+                                 .then(cache => {
+                
+                                   // Get the Offline Fallback page and return it
+                                   // The command for getting something is cache.match()
+                                   // Drawback is whenever we make an HTTP request where we can't get a valid
+                                   //    return value, we will return to this page.
+                                   //   - This has a bad side effect that if at some point some other request
+                                   //   like fetching JSON from a url we can't reach, this will also be returned
+                                   //   Fine tuning required - will modify depending on route of resource, etc..
+                                   
+                                   if(event.request.url.indexOf('/help') > -1) {
+                                     // if the event.request.url contains /help, then
+                                     //   then I know that it tried and failed to load
+                                     //   the help page.  Return offline.html instead
+                                     //   which gives the option to redirect to root page
+                                     //   which was pre-cached in the install event
+                                     return cache.match('/offline.html')
+                                   }
+                                 
+                
+                                   // An improved conditional
+                                   // As I add more pages, would have needed to add conditions
+                                   // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
+                                   if (event.request.headers.get('accept').contains('text/html')) {
+                                     return cache.match('/offline.html');
+                                   }
+                                 })
+                  })
+              }
+            })
+    )
+  }  // End Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
+});  // End CACHE, then NETWORK with Dynamic Caching Strategy
+
+
+
+
+
+//  Caching Strategies
+
 //  Cache, then Network for 'https://httpbin.org/get' use to create card along with
 //  Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
 //       for all other assets
+/*
 self.addEventListener('fetch', event => {
   // Check which kind of request we are making
   // We only want to use the Cache then Network strategy with url used to create card
@@ -267,7 +396,7 @@ self.addEventListener('fetch', event => {
                                    //   - This has a bad side effect that if at some point some other request
                                    //   like fetching JSON from a url we can't reach, this will also be returned
                                    //   Fine tuning required - will modify depending on route of resource, etc..
-                                   /*
+                                   
                                    if(event.request.url.indexOf('/help') > -1) {
                                      // if the event.request.url contains /help, then
                                      //   then I know that it tried and failed to load
@@ -276,7 +405,7 @@ self.addEventListener('fetch', event => {
                                      //   which was pre-cached in the install event
                                      return cache.match('/offline.html')
                                    }
-                                   */
+                                   
                                    
                                    // An improved conditional
                                    // As I add more pages, would have needed to add conditions
@@ -292,6 +421,7 @@ self.addEventListener('fetch', event => {
   }  // End Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
 
+*/
 
 
 
