@@ -1,8 +1,10 @@
 
 importScripts('/src/js/idb.js');
+importScripts('/src/js/indexedDB.js');
 
-const STATIC_CACHE = 'static-v32';
-const DYNAMIC_CACHE = 'dynamic-v32';
+
+const STATIC_CACHE = 'static-v33';
+const DYNAMIC_CACHE = 'dynamic-v33';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -22,12 +24,6 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   '/offline.html'
 ];
-
-const dbPromise = idb.open('posts-store', 1, db => {
-  if(!db.objectStoreNames.contains('posts')) {
-    db.createObjectStore('posts', {keyPath: 'id', autoIncrement: true});
-  }
-});
 
 
 
@@ -200,6 +196,8 @@ function isInArray(string, array) {
 
 
 
+// IndexedDB Strategy
+
 self.addEventListener('fetch', event => {
   // Check which kind of request we are making
   // We only want to use the Cache then Network strategy with url used to create card
@@ -223,16 +221,9 @@ self.addEventListener('fetch', event => {
             .then(data => {
               // The keys are the post ids from firebase database
               for(let key in data) {
-                // Loop through the posts in firebase database, store in indexedDB
-                // Open database
-                dbPromise
-                  .then(db => {
-                    // Store post in 'posts' object store
-                    let tx = db.transaction('posts', 'readwrite');
-                    let store = tx.objectStore('posts');
-                    store.put(data[key]);
-                    return tx.complete;
-                  })
+                // Loop through the posts in firebase database,
+                // Call helper function storeIntoObjectStore
+                storeIntoObjectStore('posts', data[key]);
               } // end for loop
             });
           return networkResponse;
