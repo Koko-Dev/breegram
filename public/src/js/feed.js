@@ -177,11 +177,10 @@ let networkDataReceived = false;
 
 /*
 *   A helper function to create cards dynamically via firebase database
-*     based on the data fetched fro the firebase database of posts
+*     based on the data fetched from the firebase database of posts
 *
 *   @param {Array} data -  An array of posts from firebase database
 *                       - originally an object, we converted it to an array
-*
 * */
 function updateUI(data) {
   // First the last card
@@ -194,7 +193,35 @@ function updateUI(data) {
   }
 }
 
+//  FOR indexedDB STRATEGIES
 
+// Getting the card from indexedDB object store when no network data is received
+// Make sure the browser supports indexedDB (Most browsers support as of December 2018)
+// This is not necessary to do in the Service Worker as indexedDB is supported there
+if('indexedDB' in window) {
+  // Access content in indexedDB  (An Array of all values)
+  // readDataInObjectStore returns a Promise ( return store.getAll() ) of all items in store
+  readDataInObjectStore('posts')
+    .then(data => {
+      // data is an Array of all of the values returned fro getAll()
+      
+      // Check to see if the network data was received because if we did, we don't want to
+      //     override it with the cache
+      if(!networkDataReceived) {
+        // We did not receive the data from the Network,
+        //    so we have to get it from indexedDB store
+        console.log('Network Data was not received, so ==> From indexedDB store: ', data);
+        
+        // Call updateUI(data) which already expects an Array of data
+        //   to create a card for each post in the Array of data from readDataInObjectStore()
+        updateUI(data);
+      }
+    })
+}
+
+
+
+// FOR CACHING STRATEGIES using the Cache API
 
 // Creates the card via a get request for firebase database of posts
 // Getting the card from the Network
@@ -222,11 +249,12 @@ fetch(firebase_posts)
     
     console.log('[feed.js] Array of  Posts in firebase from the WEB', dataArray);
     
+    // Clear the last card and create a new one
     updateUI(dataArray);
-  
   });
 
 
+/*
 
 // Getting the card from the Cache
 // For Cache first and Network with Dynamic Caching
@@ -253,13 +281,12 @@ if('caches' in window) {
             }
   
             console.log('[feed.js] Array of Posts in firebase from the CACHE', dataArray);
-  
-  
             updateUI(dataArray);
           }
         });
 }
 
+*/
 
 // Theoretically, you can't store this post request in the cache with this code
 // It is storing the Response of the Post Request in the Dynamic Cache
