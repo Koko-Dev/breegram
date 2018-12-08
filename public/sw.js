@@ -246,66 +246,66 @@ self.addEventListener('fetch', event => {
     // Use Dynamic Caching with Offline Fallback Page Strategy
     event.respondWith(
       caches.match(event.request)
-            .then(response => {
-              // The parameter response is null if there is no match
-              if(response) {
-                return response;
-              } else {
-                // Dynamic Caching begins here
-                // We return the event.request as usual, but we also...
-                //  -- open/create a dynamic cache and..
-                //  -- store the event request that was not in the Static Cache
-                // into the new Dynamic Cache for later offline-first capabilities
-                return fetch(event.request)
-                  .then(networkResponse => {
-                    // If you don't return caches.open, caches.put() will not do much
-                    return caches.open(DYNAMIC_CACHE)
-                                 .then(cache => {
-                                   // trimCache(DYNAMIC_CACHE, 7);
-                                   console.log('Trimmed the Cache in else');
-                                   // Store the item in dynamic cache with a clone because..
-                                   // we can only use each parameter/response Once
-                                   // Network response is stored in cache and the other goes to user.
-                                   cache.put(event.request.url, networkResponse.clone());
-                
-                                   // Return response to the user to get what they requested
-                                   return networkResponse;
-                                 })
-                  })
-                  .catch(error => {
-                    // Implement Fallback Page Strategy here:
-                    console.log('Service Worker -- Error: ', error);
-                    return caches.open(STATIC_CACHE)
-                                 .then(cache => {
-                
-                                   // Get the Offline Fallback page and return it
-                                   // The command for getting something is cache.match()
-                                   // Drawback is whenever we make an HTTP request where we can't get a valid
-                                   //    return value, we will return to this page.
-                                   //   - This has a bad side effect that if at some point some other request
-                                   //   like fetching JSON from a url we can't reach, this will also be returned
-                                   //   Fine tuning required - will modify depending on route of resource, etc..
-                                   
-                                   if(event.request.url.indexOf('/help') > -1) {
-                                     // if the event.request.url contains /help, then
-                                     //   then I know that it tried and failed to load
-                                     //   the help page.  Return offline.html instead
-                                     //   which gives the option to redirect to root page
-                                     //   which was pre-cached in the install event
-                                     return cache.match('/offline.html')
-                                   }
-                                 
-                
-                                   // An improved conditional
-                                   // As I add more pages, would have needed to add conditions
-                                   // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
-                                   if (event.request.headers.get('accept').contains('text/html')) {
-                                     return cache.match('/offline.html');
-                                   }
-                                 })
-                  })
-              }
-            })
+        .then(response => {
+          // The parameter response is null if there is no match
+          if(response) {
+            return response;
+          } else {
+            // Dynamic Caching begins here
+            // We return the event.request as usual, but we also...
+            //  -- open/create a dynamic cache and..
+            //  -- store the event request that was not in the Static Cache
+            // into the new Dynamic Cache for later offline-first capabilities
+            return fetch(event.request)
+              .then(networkResponse => {
+                // If you don't return caches.open, caches.put() will not do much
+                return caches.open(DYNAMIC_CACHE)
+                 .then(cache => {
+                   // trimCache(DYNAMIC_CACHE, 7);
+                   console.log('Trimmed the Cache in else');
+                   // Store the item in dynamic cache with a clone because..
+                   // we can only use each parameter/response Once
+                   // Network response is stored in cache and the other goes to user.
+                   cache.put(event.request.url, networkResponse.clone());
+
+                   // Return response to the user to get what they requested
+                   return networkResponse;
+                 })
+              })
+              .catch(error => {
+                // Implement Fallback Page Strategy here:
+                console.log('Service Worker -- Error: ', error);
+                return caches.open(STATIC_CACHE)
+                 .then(cache => {
+
+                   // Get the Offline Fallback page and return it
+                   // The command for getting something is cache.match()
+                   // Drawback is whenever we make an HTTP request where we can't get a valid
+                   //    return value, we will return to this page.
+                   //   - This has a bad side effect that if at some point some other request
+                   //   like fetching JSON from a url we can't reach, this will also be returned
+                   //   Fine tuning required - will modify depending on route of resource, etc..
+                   
+                   if(event.request.url.indexOf('/help') > -1) {
+                     // if the event.request.url contains /help, then
+                     //   then I know that it tried and failed to load
+                     //   the help page.  Return offline.html instead
+                     //   which gives the option to redirect to root page
+                     //   which was pre-cached in the install event
+                     return cache.match('/offline.html')
+                   }
+                 
+
+                   // An improved conditional
+                   // As I add more pages, would have needed to add conditions
+                   // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
+                   if (event.request.headers.get('accept').contains('text/html')) {
+                     return cache.match('/offline.html');
+                   }
+                 })
+              })
+          }
+        })
     )
   }  // End Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
