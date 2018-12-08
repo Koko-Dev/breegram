@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v35';
-const DYNAMIC_CACHE = 'dynamic-v35';
+const STATIC_CACHE = 'static-v36';
+const DYNAMIC_CACHE = 'dynamic-v36';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -19,7 +19,6 @@ const STATIC_FILES = [
   '/src/material-design/material.min.css',
   '/src/css/app.css',
   '/src/css/feed.css',
-  '/src/css/help.css',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   '/offline.html'
@@ -215,11 +214,19 @@ self.addEventListener('fetch', event => {
           // Store the network response in indexedDB posts store
           // Create a copy of the network response because Promises only allows for one use
           let response = networkResponse.clone();
-          
-          // Store the response in indexedDB - .json() returns a Promise
-          response.json()
+          // Clear the indexedDB ObjectData Store before we extract any data
+          //   and add to it from the firebase database to ensure that
+          //   all posts are current
+          // clearAllDataInIdbStore returns a Promise
+          clearAllDataInIdbStore('posts')
+            .then(() => {
+              // We do not need to return anything from clearAllDataIdbStore
+              //    as it is a utility function
+              // Store the response in indexedDB - .json() returns a Promise
+              return response.json()
+            })
             .then(data => {
-              // The keys are the post ids from firebase database
+              // The keys are the post names from firebase database
               for(let key in data) {
                 // Loop through the posts in firebase database,
                 // Call helper function storeIntoObjectStore
@@ -228,7 +235,7 @@ self.addEventListener('fetch', event => {
             });
           return networkResponse;
         })
-    ) // end event.responseWith()
+    ); // end event.responseWith()
   } else if(isInArray(event.request.url, STATIC_FILES)) {
     // Use Case: Use Cache Only Strategy if event.request.url is in static cache.
     // Since the service worker uses version control, the main assets in shell will be current
