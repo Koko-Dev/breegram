@@ -10,6 +10,8 @@ const dbPromise = idb.open('posts-store', 1, db => {
 *
 *   @param {string} storeName - Name of Object Store
 *   @param {Object} data - A post from the firebase database
+*
+*   @return - Returns a Promise
 * */
 function storeIntoObjectStore(storeName, data) {
   return dbPromise
@@ -63,6 +65,22 @@ function clearAllDataInIdbStore(storeName) {
       // Note:  tx.complete returns a Promise
       return tx.complete;
     })
+}
+
+// Allows us to delete a single object
+function deleteSingleItemFromIdbStore(storeName, id) {
+  dbPromise
+    .then(db => {
+      let tx = db.transaction(storeName, 'readwrite');
+      var store = tx.objectStore(store);
+      store.delete(id);
+      return tx.complete;
+    })
+    .then(() => {
+      console.log('Item Deleted');
+    })
+  
+
 }
 
 

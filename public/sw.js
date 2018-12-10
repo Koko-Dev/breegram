@@ -211,7 +211,7 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(event.request)
         .then(networkResponse => {
-          // Store the network response in indexedDB posts store
+          // Store the network response in indexedDB 'posts' store
           // Create a copy of the network response because Promises only allows for one use
           let response = networkResponse.clone();
           // Clear the indexedDB ObjectData Store before we extract any data
@@ -222,15 +222,25 @@ self.addEventListener('fetch', event => {
             .then(() => {
               // We do not need to return anything from clearAllDataIdbStore
               //    as it is a utility function
-              // Store the response in indexedDB - .json() returns a Promise
+              // return the
+              // .json() returns a Promise
               return response.json()
             })
             .then(data => {
-              // The keys are the post names from firebase database
+              // The keys are the post names from firebase database 'first-post', 'second-post', etc
               for(let key in data) {
                 // Loop through the posts in firebase database,
                 // Call helper function storeIntoObjectStore
-                storeIntoObjectStore('posts', data[key]);
+                // This will populated indexedDB 'posts' object store
+                storeIntoObjectStore('posts', data[key])
+                // Delete the item directly after it is stored
+                  /*.then(data => {
+                    // This deletes the item immediately after it is written
+                    // So, the indexedDB store should not become populated
+                    // The expected behavior is to ensure the indexedDB store 'posts' remains empty
+                    // This is used for TESTING only
+                    // deleteSingleItemFromIdbStore('posts', key)
+                  })*/
               } // end for loop
             });
           return networkResponse;
