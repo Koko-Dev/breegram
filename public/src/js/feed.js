@@ -118,6 +118,8 @@ function clearCards() {
 
 // Creates the cards based on data from  get request to firebase database of posts
 function createCard(data) {
+  
+  console.log('DATA FOR CARD', data);
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   
@@ -127,7 +129,9 @@ function createCard(data) {
   cardImage.style.backgroundImage =  'url(' + data.image + ')';
   
   cardImage.style.backgroundSize = 'cover';
-  cardImage.style.height = '180px';
+  
+  // cardImage.style.height = '180px';
+  
   
   cardWrapper.appendChild(cardImage);
   

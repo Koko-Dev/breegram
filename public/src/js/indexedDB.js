@@ -67,7 +67,7 @@ function clearAllDataInIdbStore(storeName) {
     })
 }
 
-// Allows us to delete a single object
+// Allows us to delete a single post
 function deleteSingleItemFromIdbStore(storeName, id) {
   dbPromise
     .then(db => {
@@ -79,8 +79,6 @@ function deleteSingleItemFromIdbStore(storeName, id) {
     .then(() => {
       console.log('Item Deleted');
     })
-  
-
 }
 
 
