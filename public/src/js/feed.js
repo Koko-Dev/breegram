@@ -2,6 +2,7 @@ let shareImageButton = document.querySelector('#share-image-button');
 let createPostArea = document.querySelector('#create-post');
 let closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 let sharedMomentsArea = document.querySelector('#shared-moments');
+let closeTheFab = document.querySelector('#close-create-post-modal-btn');
 
 if(!window.Promise) {
   window.Promise = Promise;
@@ -10,7 +11,17 @@ if(!window.Promise) {
 
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
-  createPostArea.style.display = 'block';
+  
+  // createPostArea.style.display = 'block';
+  
+  /*setTimeout(() => {
+    createPostArea.style.transform = 'translateY(0)';
+  }, 1);*/
+  
+  createPostArea.style.transform = 'translateY(0)';
+  
+  // createPostArea.style.transform = 'translateY(0)';
+  
   
   // Check to see if we previously were able to be prompted to install the app install banner
   //   because we can't show it on our own; we need to at least have had Chrome try to do so
@@ -34,7 +45,7 @@ function openCreatePostModal() {
     });
     
     // Set promptDeferment equal to null because you only have one shot to prompt the user
-    //      to install the banner.  They can enable banner manually if they canceled installation
+    //    to install the banner.  They can enable banner manually if they canceled installation
     promptDeferment = null;
   }
   
@@ -54,8 +65,12 @@ function openCreatePostModal() {
 }
 
 
+closeTheFab.addEventListener('click', closeCreatePostModal);
+
 function closeCreatePostModal() {
-  createPostArea.style.display = 'none';
+  createPostArea.style.transform = 'translateY(100vh)';
+  // createPostArea.style.display = 'none';
+  
 }
 /*
 * shareImageButton from #share-image-button, from public/index.html, line 131

@@ -14,8 +14,11 @@ body {
   top: 56px;
   background: white;
   text-align: center;
-  display: none;
+  /*display: none;*/
+  transform: translateY(100vh);
+  transition: transform 0.3s;
 }
+
 
 .main-image {
   max-width: 100%;
@@ -30,6 +33,7 @@ body {
   right: 0;
   padding: 30px;
 }
+
 
 .input-section {
   display: block;
