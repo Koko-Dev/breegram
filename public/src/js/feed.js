@@ -143,6 +143,7 @@ function createCard(data) {
   cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
   cardTitleTextElement.style.fontWeight = '700';
   cardTitleTextElement.style.textShadow = '2px 2px #20262A';
+  cardTitleTextElement.style.backgroundPosition = 'center';
   
   cardImage.appendChild(cardTitleTextElement);
   

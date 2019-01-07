@@ -32,7 +32,6 @@
 
 .shared-moment-card.mdl-card {
   margin: 10px auto;
-  /*width: 300px;*/
   width: 100vw;
 }
 
@@ -40,44 +39,40 @@
   height: 134px;
 }
 
-@media (min-width: 300px) {
+@media screen and (min-width: 300px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 95vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 139px;
   }
 }
 
-@media (min-width: 350px) and (max-width: 405px){
+@media screen and (min-width: 350px) and (max-width: 405px){
     .shared-moment-card.mdl-card {
         margin: 10px auto;
         width: 95vw;
-        /*height: 100%;*/
     }
     .shared-moment-card .mdl-card__title {
         height: 161px;
     }
 }
 
-@media (min-width: 406px) and (max-width: 450px){
+@media screen and (min-width: 406px) and (max-width: 450px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 90vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 177px;
   }
 }
 
-@media (min-width: 451px) and (max-width: 499px){
+@media screen and (min-width: 451px) and (max-width: 499px){
     .shared-moment-card.mdl-card {
         margin: 10px auto;
         width: 95vw;
-        /*height: 100%;*/
     }
     .shared-moment-card .mdl-card__title {
         height: 207px;
@@ -86,55 +81,50 @@
 
 
 
-@media (min-width: 500px) and (max-width: 509px){
+@media screen and (min-width: 500px) and (max-width: 509px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 95vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 233px;
   }
 }
 
-@media (min-width: 510px) and (max-width: 550px){
+@media screen and (min-width: 510px) and (max-width: 550px){
     .shared-moment-card.mdl-card {
         margin: 10px auto;
         width: 95vw;
-        /*height: 100%;*/
     }
     .shared-moment-card .mdl-card__title {
         height: 234px;
     }
 }
 
-@media (min-width: 551px) and (max-width: 603px){
+@media screen and (min-width: 551px) and (max-width: 603px){
     .shared-moment-card.mdl-card {
         margin: 10px auto;
         width: 95vw;
-        /*height: 100%;*/
     }
     .shared-moment-card .mdl-card__title {
         height: 252px;
     }
 }
 
-@media (min-width: 604px) and (max-width: 650px) {
+@media screen and (min-width: 604px) and (max-width: 650px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 90vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 262px;
   }
 }
 
-@media (min-width: 651px) and (max-width: 699px) {
+@media screen and (min-width: 651px) and (max-width: 699px) {
     .shared-moment-card.mdl-card {
         margin: 10px auto;
         width: 90vw;
-        /*height: 100%;*/
     }
     .shared-moment-card .mdl-card__title {
         height: 283px;
@@ -142,11 +132,10 @@
 }
 
 
-@media (min-width: 700px) and (max-width: 750px){
+@media screen and (min-width: 700px) and (max-width: 750px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 85vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 287px;
@@ -154,11 +143,10 @@
   }
 }
 
-@media (min-width: 751px) and (max-width: 800px){
+@media screen and (min-width: 751px) and (max-width: 800px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 75vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 268px;
@@ -166,19 +154,17 @@
   }
 }
 
-@media (min-width: 801px) and (max-width: 850px) {
+@media screen and (min-width: 801px) and (max-width: 850px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 75vw;
-    /*height: 100%;*/
   }
   .shared-moment-card .mdl-card__title {
     height: 291px;
-    
   }
 }
 
-@media (min-width: 851px) and (max-width: 899px) {
+@media screen and (min-width: 851px) and (max-width: 899px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 75vw;
@@ -190,7 +176,7 @@
   }
 }
 
-@media (min-width: 900px) and (max-width: 950px){
+@media screen and (min-width: 900px) and (max-width: 950px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 70vw;
@@ -202,7 +188,7 @@
   }
 }
 
-@media (min-width: 951px) and (max-width: 999px){
+@media screen and (min-width: 951px) and (max-width: 999px){
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 70vw;
@@ -214,7 +200,7 @@
 }
 
 
-@media (min-width: 1000px) and (max-width: 1050px) {
+@media screen and (min-width: 1000px) and (max-width: 1050px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 65vw;
@@ -227,7 +213,7 @@
   }
 }
 
-@media (min-width: 1051px) and (max-width: 1099px) {
+@media screen and (min-width: 1051px) and (max-width: 1099px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 60vw;
@@ -239,7 +225,7 @@
   }
 }
 
-@media (min-width: 1100px) and (max-width: 1150px) {
+@media screen and (min-width: 1100px) and (max-width: 1150px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 60vw;
@@ -249,7 +235,7 @@
   }
 }
 
-@media (min-width: 1151px) and (max-width: 1199px) {
+@media screen and (min-width: 1151px) and (max-width: 1199px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -259,7 +245,7 @@
   }
 }
 
-@media (min-width: 1200px) and (max-width: 1250px) {
+@media screen and (min-width: 1200px) and (max-width: 1250px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -269,7 +255,7 @@
   }
 }
 
-@media (min-width: 1251px) and (max-width: 1300px) {
+@media screen and (min-width: 1251px) and (max-width: 1300px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -279,7 +265,7 @@
   }
 }
 
-@media (min-width: 1301px) and (max-width: 1350px) {
+@media screen and (min-width: 1301px) and (max-width: 1350px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -289,7 +275,7 @@
   }
 }
 
-@media (min-width: 1351px) and (max-width: 1400px) {
+@media screen and (min-width: 1351px) and (max-width: 1400px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -299,7 +285,7 @@
   }
 }
 
-@media (min-width: 1401px) and (max-width: 1450px) {
+@media screen and (min-width: 1401px) and (max-width: 1450px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -310,7 +296,7 @@
 }
 
 
-@media (min-width: 1451px) and (max-width: 1500px) {
+@media screen and (min-width: 1451px) and (max-width: 1500px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -320,7 +306,7 @@
   }
 }
 
-@media (min-width: 1501px) and (max-width: 1550px) {
+@media screen and (min-width: 1501px) and (max-width: 1550px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -330,7 +316,7 @@
   }
 }
 
-@media (min-width: 1551px) and (max-width: 1600px) {
+@media screen and (min-width: 1551px) and (max-width: 1600px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -341,7 +327,7 @@
 }
 
 
-@media (min-width: 1601px) and (max-width: 1650px) {
+@media screen and (min-width: 1601px) and (max-width: 1650px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -351,7 +337,7 @@
   }
 }
 
-@media (min-width: 1651px) and (max-width: 1700px) {
+@media screen and (min-width: 1651px) and (max-width: 1700px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -361,7 +347,7 @@
   }
 }
 
-@media (min-width: 1701px) and (max-width: 1750px) {
+@media screen and (min-width: 1701px) and (max-width: 1750px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -371,7 +357,7 @@
   }
 }
 
-@media (min-width: 1751px) and (max-width: 1800px) {
+@media screen and (min-width: 1751px) and (max-width: 1800px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -391,7 +377,7 @@
   }
 }
 
-@media (min-width: 1851px) and (max-width: 1900px) {
+@media screen and (min-width: 1851px) and (max-width: 1900px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -401,7 +387,7 @@
   }
 }
 
-@media (min-width: 1901px) and (max-width: 1950px) {
+@media screen and (min-width: 1901px) and (max-width: 1950px) {
   .shared-moment-card.mdl-card {
     margin: 10px auto;
     width: 55vw;
@@ -411,7 +397,7 @@
   }
 }
 
-@media (min-width: 1951px) and (max-width: 2000px) {
+@media screen and (min-width: 1951px) and (max-width: 2000px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 55vw;
@@ -421,7 +407,7 @@
     }
 }
 
-@media (min-width: 2001px) and (max-width: 2051px) {
+@media screen and (min-width: 2001px) and (max-width: 2051px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 55vw;
@@ -431,7 +417,7 @@
     }
 }
 
-@media (min-width: 2052px) and (max-width: 2100px) {
+@media screen and (min-width: 2052px) and (max-width: 2100px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 55vw;
@@ -441,7 +427,7 @@
     }
 }
 
-@media (min-width: 2101px) and (max-width: 2150px) {
+@media screen and (min-width: 2101px) and (max-width: 2150px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 50vw;
@@ -451,7 +437,7 @@
     }
 }
 
-@media (min-width: 2151px) and (max-width: 2200px) {
+@media screen and (min-width: 2151px) and (max-width: 2200px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 50vw;
@@ -461,7 +447,7 @@
     }
 }
 
-@media (min-width: 2201px) and (max-width: 2250px) {
+@media screen and (min-width: 2201px) and (max-width: 2250px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 50vw;
@@ -471,7 +457,7 @@
     }
 }
 
-@media (min-width: 2251px) and (max-width: 2300px) {
+@media screen and (min-width: 2251px) and (max-width: 2300px) {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 50vw;
@@ -481,7 +467,7 @@
     }
 }
 
-@media (min-width: 2301px)  {
+@media screen and (min-width: 2301px)  {
     .shared-moment-card.mdl-card {
         margin: 20px auto;
         width: 45vw;
