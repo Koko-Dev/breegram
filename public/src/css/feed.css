@@ -1,3 +1,9 @@
+html,
+body {
+    margin-top: -10px
+}
+
+
 #create-post {
   z-index: 1001;
   position: fixed;
