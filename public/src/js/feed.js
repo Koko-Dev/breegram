@@ -3,6 +3,9 @@ let createPostArea = document.querySelector('#create-post');
 let closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 let sharedMomentsArea = document.querySelector('#shared-moments');
 let closeTheFab = document.querySelector('#close-create-post-modal-btn');
+let form = document.querySelector('form');
+
+
 
 if(!window.Promise) {
   window.Promise = Promise;
