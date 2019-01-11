@@ -276,6 +276,20 @@ fetch(firebase_posts)
     updateUI(dataArray);
   });
 
+/* Register a submit listener from the form submit (post) button */
+form.addEventListener('submit', event => {
+  console.log('[feed.js] Post!');
+  // Prevent default so that the page does not get loaded because the default of
+  //    a submit event is to data to the server (and at this point the page reloads)
+  //  We don't want to do that. At this point we want to do that via JS, so cancel default.
+  event.preventDefault();
+  
+  // Check to see if title and location from index.html
+//      (html input tags for title and location information)
+  //    is populated with data
+  
+});
+
 
 /*
 
