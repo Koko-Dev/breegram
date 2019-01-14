@@ -282,17 +282,18 @@ fetch(firebase_posts)
 /* Register a submit listener from the form submit (post) button */
 form.addEventListener('submit', event => {
   // console.log('[feed.js] Post!');
-  // Prevent default so that the page does not get loaded because the default of
+  // Prevent default so that the page does not get loaded, because the default of
   //    a submit event is to get data to the server
   //    (and at this point the page reloads)
   //  We don't want to do that. At this point we want to do that via JS,
-  //     so cancel default.
+  //     so we cancel default.
   event.preventDefault();
   
   // Check to see if #title and #location from index.html
   //      (html input tags for title and location information)
   //    is populated with data (if it has a value)
   // Use the trim method to get rid of whitespace
+  //  .value gives us access to whatever the user entered.
   if(titleInput.value.trim() === '' || locationInput.value.trim() === ''){
     alert('Please enter valid data');
     // return if not valid data was entered by the user because if it is
@@ -303,9 +304,66 @@ form.addEventListener('submit', event => {
   // Close the post modal
   closeCreatePostModal();
   
-  // Register a Sync request:
-  //  Use cases: If there is no or connectivity with server is not in sync or absent
-  //             If the user closes tab too quickly and
+  /*
+   Register a Sync request:
+   Use cases:
+        -- If there is no or connectivity with server is not in sync or absent
+        -- If the user closes tab too quickly
+ 
+   Check to see that we do have access to service worker in given browser
+   If no service worker access, then we cannot register background sync
+   Check to see if the SyncManager interface of the ServiceWorker API is
+   available because it provides an interface for registering and
+   listing sync registrations. Returns a Promise..
+   At current time 1/14/2019, only Chrome and is in development in
+   Edge, Firefox, and Opera according to MDN.
+   According to caniuse.com, Opera allows SyncManager
+   So, even if a Browser supports the service worker, it may yet not
+   support SyncManager.  So we check for both.
+ */
+  if('serviceWorker' in navigator && 'SyncManager' in window) {
+     /* Check to see that the Service Worker has been configured and activated,
+          ready to take some input.. using .ready (returns a Promise)
+       .ready is a reqd-only property of the SW interface which provides
+             a way of delaying code execution until an SW is active.
+       .ready returns a Promise that will never reject, and which waits
+             indefinitely until the ServiceWorkerRegistration associated
+             with the current page has an 'active' worker.
+      Once that condition is met, it resolves with the ServiceWorkerRegistration.
+    */
+    navigator.serviceWorker.ready
+      .then(sw => {
+        /*
+          We can now interact with the Service Worker
+          We do it this way because we are not in sw.js and the event
+          that triggers the SyncManager happens in feed.js (th)e form submission
+          We cannot listen to the SyncManager in sw.js because we
+           do not have access to the DOM there (form submit listener in feed.js)
+          
+          Register a Synchronization Task (sync tag)
+          This gives us access to the SyncManager from the SW's point of view
+          Takes tag as the input
+          Used to reestablish connectivity and
+             check which outstanding tasks we have.
+          Use the tag to see what we need to do with the task.
+          
+          Requires a counterpart in the actual Service Worker (SW).
+        */
+        sw.sync.register('sync-new-post');
+        /*
+           At this point we do not have all of the info
+           We need to pass information:
+              -- find out what we should do,
+              -- what we should send (titleInput.value, locationInput.value),
+              -- what data we want to send with that request.
+              
+           Next step, then, is to configure the data we want to synchronize,
+                send, and then store in indexedDB;
+         */
+
+      })
+  
+  }
   
   
 });

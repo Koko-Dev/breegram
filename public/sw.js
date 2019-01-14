@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v46';
-const DYNAMIC_CACHE = 'dynamic-v46';
+const STATIC_CACHE = 'static-v47';
+const DYNAMIC_CACHE = 'dynamic-v47';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -271,7 +271,7 @@ self.addEventListener('fetch', event => {
                 return caches.open(DYNAMIC_CACHE)
                  .then(cache => {
                    // trimCache(DYNAMIC_CACHE, 7);
-                   console.log('Trimmed the Cache in else');
+                   // console.log('Trimmed the Cache in else');
                    // Store the item in dynamic cache with a clone because..
                    // we can only use each parameter/response Once
                    // Network response is stored in cache and the other goes to user.
