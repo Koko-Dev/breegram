@@ -334,6 +334,18 @@ form.addEventListener('submit', event => {
     navigator.serviceWorker.ready
       .then(sw => {
         /*
+          Create an object with:
+             -- id (new Date in string form as a unique identifier)
+             -- title value, and
+             -- location value
+       */
+        let post = {
+          id: new Date().toISOString(),
+          title: titleInput.value,
+          location: locationInput.value
+        };
+        
+        /*
           We can now interact with the Service Worker
           We do it this way because we are not in sw.js and the event
           that triggers the SyncManager happens in feed.js (th)e form submission
