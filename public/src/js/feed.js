@@ -281,15 +281,32 @@ fetch(firebase_posts)
 
 /* Register a submit listener from the form submit (post) button */
 form.addEventListener('submit', event => {
-  console.log('[feed.js] Post!');
+  // console.log('[feed.js] Post!');
   // Prevent default so that the page does not get loaded because the default of
-  //    a submit event is to data to the server (and at this point the page reloads)
-  //  We don't want to do that. At this point we want to do that via JS, so cancel default.
+  //    a submit event is to get data to the server
+  //    (and at this point the page reloads)
+  //  We don't want to do that. At this point we want to do that via JS,
+  //     so cancel default.
   event.preventDefault();
   
-  // Check to see if title and location from index.html
-//      (html input tags for title and location information)
-  //    is populated with data
+  // Check to see if #title and #location from index.html
+  //      (html input tags for title and location information)
+  //    is populated with data (if it has a value)
+  // Use the trim method to get rid of whitespace
+  if(titleInput.value.trim() === '' || locationInput.value.trim() === ''){
+    alert('Please enter valid data');
+    // return if not valid data was entered by the user because if it is
+    //   empty then we want to ignore that click on the post button
+    return;
+  }
+  
+  // Close the post modal
+  closeCreatePostModal();
+  
+  // Register a Sync request:
+  //  Use cases: If there is no or connectivity with server is not in sync or absent
+  //             If the user closes tab too quickly and
+  
   
 });
 
