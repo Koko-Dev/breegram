@@ -1,6 +1,9 @@
-const dbPromise = idb.open('posts-store', 1, db => {
+const dbPromise = idb.open('posts-store', 2, db => {
   if(!db.objectStoreNames.contains('posts')) {
     db.createObjectStore('posts', {keyPath: 'id', autoIncrement: true});
+  }
+  if(!db.objectStoreNames.contains('sync-posts')) {
+    db.createObjectStore('sync-posts', {keyPath: 'id', autoIncrement: true});
   }
 });
 

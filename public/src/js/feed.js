@@ -197,7 +197,10 @@ function createCard(data) {
 
 const url = 'https://httpbin.org/get';
 const posturl = 'https://httpbin.org/post';
+
+// Backend
 const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
+
 let networkDataReceived = false;
 
 
@@ -279,25 +282,58 @@ fetch(firebase_posts)
     updateUI(dataArray);
   });
 
+
+/*  Send data to the backend  (var firebase_posts)
+*   Used if client Browser does not support syncManager interface or Service Workers
+*/
+function sendData (){
+  fetch(firebase_posts, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+      image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/breeGrams1.jpeg?alt=media&token=10ae4109-7b4d-417f-8267-1087b1a4ef56'
+    })
+  })
+    .then(response=> {
+      console.log('Data Sent', response);
+      
+      //  Update the UI after the data has been sent
+      // because now we can fetch data from the backend
+      updateUI();
+    })
+}
+
 /* Register a submit listener from the form submit (post) button */
 form.addEventListener('submit', event => {
-  // console.log('[feed.js] Post!');
-  // Prevent default so that the page does not get loaded, because the default of
-  //    a submit event is to get data to the server
-  //    (and at this point the page reloads)
-  //  We don't want to do that. At this point we want to do that via JS,
-  //     so we cancel default.
+  console.log('[feed.js] Post!');
+  /*
+   Prevent default so that the page does not get loaded, because the default of
+   a submit event is to get data to the server
+   (and at this point the page reloads)
+   We don't want to do that. At this point we want to do that via JS,
+   so we cancel default.
+   */
   event.preventDefault();
   
-  // Check to see if #title and #location from index.html
-  //      (html input tags for title and location information)
-  //    is populated with data (if it has a value)
-  // Use the trim method to get rid of whitespace
-  //  .value gives us access to whatever the user entered.
+  /*
+   Check to see if #title and #location from index.html
+   (html input tags for title and location information)
+   is populated with data (if it has a value)
+   Use the trim method to get rid of whitespace
+   .value gives us access to whatever the user entered.
+   */
   if(titleInput.value.trim() === '' || locationInput.value.trim() === ''){
     alert('Please enter valid data');
-    // return if not valid data was entered by the user because if it is
-    //   empty then we want to ignore that click on the post button
+    /*
+     return if invalid data was entered by the user because if it is
+     empty then we want to ignore that click on the post button
+     */
     return;
   }
   
@@ -315,10 +351,10 @@ form.addEventListener('submit', event => {
    Check to see if the SyncManager interface of the ServiceWorker API is
    available because it provides an interface for registering and
    listing sync registrations. Returns a Promise..
-   At current time 1/14/2019, only Chrome and is in development in
-   Edge, Firefox, and Opera according to MDN.
-   According to caniuse.com, Opera allows SyncManager
-   So, even if a Browser supports the service worker, it may yet not
+   At current time 1/14/2019, only Chrome and Opera has Background Sync API,
+     In development are Edge and Firefox, according to caniuse.com.
+
+   Even if a Browser supports the service worker, it may yet not
    support SyncManager.  So we check for both.
  */
   if('serviceWorker' in navigator && 'SyncManager' in window) {
@@ -348,36 +384,60 @@ form.addEventListener('submit', event => {
         /*
           We can now interact with the Service Worker
           We do it this way because we are not in sw.js and the event
-          that triggers the SyncManager happens in feed.js (th)e form submission
+          that triggers the SyncManager happens in feed.js (the form submission).
+          
           We cannot listen to the SyncManager in sw.js because we
            do not have access to the DOM there (form submit listener in feed.js)
           
           Register a Synchronization Task (sync tag)
-          This gives us access to the SyncManager from the SW's point of view
-          Takes tag as the input
+          i.e.  sw.sync.register('sync-new-post');
+          
+           -- This gives us access to the SyncManager from the SW's point of view.
+           -- Takes tag as the input
+           
+         At this point we do not have all of the info
+         We need to pass information:
+           -- find out what we should do,
+           -- what we should send (titleInput.value, locationInput.value),
+           -- what data we want to send with that request.
+ 
+         Next step, then, is to configure the data we want to synchronize,
+         send, and then store in indexedDB;
+          
           Used to reestablish connectivity and
              check which outstanding tasks we have.
           Use the tag to see what we need to do with the task.
           
-          Requires a counterpart in the actual Service Worker (SW).
-        */
-        sw.sync.register('sync-new-post');
-        /*
-           At this point we do not have all of the info
-           We need to pass information:
-              -- find out what we should do,
-              -- what we should send (titleInput.value, locationInput.value),
-              -- what data we want to send with that request.
+          Requires a counterpart in the actual Service Worker (SW) and
+              we need to pass it data/info to synchronize (i.e. post content).
               
-           Next step, then, is to configure the data we want to synchronize,
-                send, and then store in indexedDB;
-         */
-
+          Cannot pass post content to register() method the sync manager
+                  does not have a built-in database,
+            so we use IndexedDB to store post (location, title, id).
+        */
+        storeIntoObjectStore('sync-posts', post)
+          .then(() => {
+            // We only register sync tag if we have successfully written
+            //    data to IndexedDB (otherwise we would have the tags set
+            //    up but the data would not be there.
+            return sw.sync.register('sync-new-post');
+        })
+          .then(() => {
+            let snackbarContainer = document.querySelector('#confirmation-toast');
+  
+            // Materialize syntax for user toast message
+            let data = {message: 'Your Post was saved for Background Sync'};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+          })
+          .catch(error => {
+            console.log(error);
+          })
       })
-  
+  } else {
+    // Add a fallback in case the syncManager is not allowed by the Browser
+    // Idea:  We can also add the card manually with JavaScript
+    sendData();
   }
-  
-  
 });
 
 
