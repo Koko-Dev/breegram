@@ -321,6 +321,39 @@ self.addEventListener('fetch', event => {
 
 
 
+/*  Add Background Sync Capabilities
+*    -- Sync the data to the Service Worker
+ *
+ *  Steps:
+ *    -- Listen for the sync event
+ *    -- This event will be executed:
+ *       1.  whenever the Service Worker believes it has
+ *            reestablished connectivity, or
+ *       2.  if the connectivity was always there
+ *             (as soon as a new sync task was registered.
+ *   -- So, whenever the Service Worker thinks it has connectivity
+ *        and it has an outstanding synchronization task, it will
+ *        trigger this event.
+ *
+ */
+self.addEventListener('sync', event => {
+  /*
+   At this point, I want to send the request to the Server
+   because, from this point, I know that we have an internet
+   connection.
+   */
+  console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
+  
+  
+
+
+})
+
+
+
+
+
+
 
 
 //  Caching Strategies
@@ -720,6 +753,9 @@ self.addEventListener('fetch', event => {
 });   // End NETWORK FIRST, then DYNAMIC WITH CACHE FALLBACK Strategy
 
 */
+
+
+
 
 
 
