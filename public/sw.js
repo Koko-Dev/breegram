@@ -341,13 +341,30 @@ self.addEventListener('sync', event => {
    At this point, I want to send the request to the Server
    because, from this point, I know that we have an internet
    connection.
+   
    */
   console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
   
+  /*
+  *
+     -- In theory, we could have many sync tags and would want
+     to do different things for each.
+     
+     -- I registered a sync tag, 'sync-new-post' in feed.js
+         and would like to handle it here
+   */
+  
+  // Check for to see if there is an event tag
+  if(event.tag === 'sync-new-post') {
+    // If you have different sync tags, use a switch case
+    console.log('[Service Worker]- Syncing new Posts', event.tag);
+    
+  }
+  
   
 
 
-})
+});
 
 
 
