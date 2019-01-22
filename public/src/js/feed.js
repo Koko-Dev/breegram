@@ -140,7 +140,7 @@ function clearCards() {
 // Creates the cards based on data from  get request to firebase database of posts
 function createCard(data) {
   
-  console.log('DATA FOR CARD', data);
+  // console.log('DATA FOR CARD', data);
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   
@@ -214,7 +214,7 @@ let networkDataReceived = false;
 function updateUI(data) {
   // First the last card
   clearCards();
-  console.log('[feed.js]');
+  // console.log('[feed.js]');
 
 // Loops through the posts in the firebase database and calls createCard for each post
   for(let i = 0; i < data.length; i++) {
@@ -271,7 +271,7 @@ fetch(firebase_posts)
     //   in order to e able to loop through each post in updateUI
     dataArray = [];
     for(let key in data) {
-      console.log('[feed.js] key: ', key);
+      // console.log('[feed.js] key: ', key);
   
       dataArray.push(data[key]);
     }

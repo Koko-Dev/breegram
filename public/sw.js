@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v47';
-const DYNAMIC_CACHE = 'dynamic-v47';
+const STATIC_CACHE = 'static-v49';
+const DYNAMIC_CACHE = 'dynamic-v49';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -335,13 +335,20 @@ self.addEventListener('fetch', event => {
  *        and it has an outstanding synchronization task, it will
  *        trigger this event.
  *
+*   -- Steps:
+*       1.  React to Sync Event
+*       2.  Get data stored in sync-posts object store
+*       3.  Loop through stored data from sync-posts object store
+*       4.  Send a Post Request for each of the data pieces I stored
+*       5.  Delete Post from indexedDB if we successfully sent it to the Server
+*       6.
+ *
  */
 self.addEventListener('sync', event => {
   /*
    At this point, I want to send the request to the Server
    because, from this point, I know that we have an internet
    connection.
-   
    */
   console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
   
@@ -360,6 +367,65 @@ self.addEventListener('sync', event => {
     console.log('[Service Worker]- Syncing new Posts', event.tag);
     
   }
+  
+  //  Read and Send all post data
+  event.waitUntil(
+    readDataInObjectStore('sync-posts')
+      .then(data => {
+        /*
+          -- User Posts Title, Location
+           -- Send the data from the sync-posts object store
+           to the Server.
+           -- We want to loop through the data because the user
+           may have sent multiple posts.
+           -- Use a for/of loop to gain access to all of the
+           posts queued up for synchronization
+           -- For now, I will temporarily hard-code the image
+         */
+        
+        for(let dt of data) {
+          fetch(firebase_posts, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              id: dt.id,
+              title: dt.title,
+              location: dt.location,
+              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/breeGrams1.jpeg?alt=media&token=10ae4109-7b4d-417f-8267-1087b1a4ef56'
+            })
+          })
+            .then(response=> {
+              console.log('Sent Data', response);
+              /* Clean sync-posts object store one post at a time.
+               * To be safe, check to see if response.ok is true
+                *  -- 'ok' is a helper property provided on the
+                *  response object which indicated if the response
+                *  code is in the 200 area, which means it was
+                *  successful
+                *  */
+              if(response.ok) {
+                /*
+                   -Use helper function in indexedDB.js to delete post
+                      from indexedDB.
+                   -Later, upgrade this to get the ID from the Server,
+                      which would be much safer to execute the right
+                      code on the right response
+                 */
+                deleteSingleItemFromIdbStore('sync-posts', dt.id); // not working correctly
+              }
+            })
+            .catch(error => {
+              console.log('[Service Worker] Sync listener => Error which sending data: ', error);
+            })
+          
+        }  // end for loop
+        
+      })
+    
+  )
   
   
 
