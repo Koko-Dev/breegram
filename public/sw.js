@@ -420,7 +420,7 @@ self.addEventListener('sync', event => {
               }
             })
             .catch(error => {
-              console.log('[Service Worker] Sync listener => Error which sending data: ', error);
+              console.log('[Service Worker] Sync listener => Error with sending data: ', error);
             })
           
         }  // end for loop
