@@ -75,7 +75,7 @@ function deleteSingleItemFromIdbStore(storeName, id) {
   dbPromise
     .then(db => {
       let tx = db.transaction(storeName, 'readwrite');
-      let store = tx.objectStore(store);
+      let store = tx.objectStore(storeName);
       store.delete(id);
       return tx.complete;
     })

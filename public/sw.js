@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v49';
-const DYNAMIC_CACHE = 'dynamic-v49';
+const STATIC_CACHE = 'static-v50';
+const DYNAMIC_CACHE = 'dynamic-v50';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -345,9 +345,11 @@ self.addEventListener('fetch', event => {
  *
  */
 self.addEventListener('sync', event => {
+  // Backend
+  const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
   /*
    At this point, I want to send the request to the Server
-   because, from this point, I know that we have an internet
+   because, from this point,  because I know that we have an internet
    connection.
    */
   console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
@@ -424,12 +426,8 @@ self.addEventListener('sync', event => {
         }  // end for loop
         
       })
-    
   )
   
-  
-
-
 });
 
 
