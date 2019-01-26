@@ -15,6 +15,7 @@ const STATIC_FILES = [
   '/src/js/idb.js',
   '/src/js/promise.js',
   '/src/js/fetch.js',
+  '/src/js/indexedDB.js',
   '/src/material-design/material.min.js',
   '/src/material-design/material.min.css',
   '/src/css/app.css',
