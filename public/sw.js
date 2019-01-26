@@ -417,7 +417,9 @@ self.addEventListener('sync', event => {
                       which would be much safer to execute the right
                       code on the right response
                  */
-                deleteSingleItemFromIdbStore('sync-posts', dt.id); // not working correctly
+                // not working correctly because for-loops don't always work
+                // correctly  with asynchronous code.  I will fix this later.
+                deleteSingleItemFromIdbStore('sync-posts', dt.id);
               }
             })
             .catch(error => {
