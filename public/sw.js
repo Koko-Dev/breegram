@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v50';
-const DYNAMIC_CACHE = 'dynamic-v50';
+const STATIC_CACHE = 'static-v51';
+const DYNAMIC_CACHE = 'dynamic-v51';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -347,7 +347,8 @@ self.addEventListener('fetch', event => {
  */
 self.addEventListener('sync', event => {
   // Backend
-  const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
+  // const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
+     const firebase_posts='https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
   /*
    At this point, I want to send the request to the Server
    because, from this point,  because I know that we have an internet

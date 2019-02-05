@@ -199,7 +199,8 @@ const url = 'https://httpbin.org/get';
 const posturl = 'https://httpbin.org/post';
 
 // Backend
-const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
+// const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
+const firebase_posts = 'https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
 
 let networkDataReceived = false;
 
