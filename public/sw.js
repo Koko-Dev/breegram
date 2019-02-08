@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v51';
-const DYNAMIC_CACHE = 'dynamic-v51';
+const STATIC_CACHE = 'static-v60';
+const DYNAMIC_CACHE = 'dynamic-v60';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -24,7 +24,6 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   '/offline.html'
 ];
-
 
 
 /*
@@ -51,9 +50,7 @@ function trimCache(cacheName, maxItems) {
           }
         })
     })
-    
 }
-
 
 
 // install and activate are triggered by the Browser
@@ -76,7 +73,6 @@ function trimCache(cacheName, maxItems) {
 });*/
 
 
-
 // The install event is the best place to cache static assets
 self.addEventListener('install', function (event) {
   // console.log('[Service Worker] Installing Service Worker ...', event);
@@ -95,7 +91,6 @@ self.addEventListener('install', function (event) {
             return cache.addAll(STATIC_FILES);
           }))
 });  // End install event
-
 
 
 
@@ -166,7 +161,6 @@ self.addEventListener('activate', event => {
   * */
   event.waitUntil(clients.claim());
 });  // END activate event
-
 
 
 
@@ -296,20 +290,20 @@ self.addEventListener('fetch', event => {
                    //   like fetching JSON from a url we can't reach, this will also be returned
                    //   Fine tuning required - will modify depending on route of resource, etc..
                    
-                   if(event.request.url.indexOf('/help') > -1) {
+                   /*if(event.request.url.indexOf('/help') > -1) {
                      // if the event.request.url contains /help, then
                      //   then I know that it tried and failed to load
                      //   the help page.  Return offline.html instead
                      //   which gives the option to redirect to root page
                      //   which was pre-cached in the install event
                      return cache.match('/offline.html')
-                   }
+                   }*/
                  
 
                    // An improved conditional
                    // As I add more pages, would have needed to add conditions
                    // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
-                   if (event.request.headers.get('accept').contains('text/html')) {
+                   if (event.request.headers.get('accept').includes('text/html')) {
                      return cache.match('/offline.html');
                    }
                  })
@@ -321,9 +315,8 @@ self.addEventListener('fetch', event => {
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
 
 
-
 /*  Add Background Sync Capabilities
-*    -- Sync the data to the Service Worker
+ *    -- Sync the data to the Service Worker
  *
  *  Steps:
  *    -- Listen for the sync event
@@ -336,19 +329,18 @@ self.addEventListener('fetch', event => {
  *        and it has an outstanding synchronization task, it will
  *        trigger this event.
  *
-*   -- Steps:
-*       1.  React to Sync Event
-*       2.  Get data stored in sync-posts object store
-*       3.  Loop through stored data from sync-posts object store
-*       4.  Send a Post Request for each of the data pieces I stored
-*       5.  Delete Post from indexedDB if we successfully sent it to the Server
-*       6.
- *
+ *  -- Steps:
+ *       1.  React to Sync Event
+ *       2.  Get data stored in sync-posts object store
+ *       3.  Loop through stored data from sync-posts object store
+ *       4.  Send a Post Request for each of the data pieces I stored
+ *       5.  Delete Post from indexedDB if we successfully sent it to the Server
  */
 self.addEventListener('sync', event => {
   // Backend
-  // const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
-     const firebase_posts='https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
+  // const firebasePosts = 'https://breegram-instagram.firebaseio.com/posts.json';
+  let firebasePosts = 'https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
+  
   /*
    At this point, I want to send the request to the Server
    because, from this point,  because I know that we have an internet
@@ -369,7 +361,6 @@ self.addEventListener('sync', event => {
   if(event.tag === 'sync-new-post') {
     // If you have different sync tags, use a switch case
     console.log('[Service Worker]- Syncing new Posts', event.tag);
-    
   }
   
   //  Read and Send all post data
@@ -385,10 +376,10 @@ self.addEventListener('sync', event => {
            -- Use a for/of loop to gain access to all of the
            posts queued up for synchronization
            -- For now, I will temporarily hard-code the image
-         */
+        */
         
         for(let dt of data) {
-          fetch(firebase_posts, {
+          fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -411,32 +402,28 @@ self.addEventListener('sync', event => {
                 *  successful
                 *  */
               if(response.ok) {
-                /*
-                   -Use helper function in indexedDB.js to delete post
-                      from indexedDB.
-                   -Later, upgrade this to get the ID from the Server,
-                      which would be much safer to execute the right
-                      code on the right response
-                 */
-                // not working correctly because for-loops don't always work
-                // correctly  with asynchronous code.  I will fix this later.
-                deleteSingleItemFromIdbStore('sync-posts', dt.id);
+                response.json()
+                        .then(responseData => {
+                          /*
+                           -Use helper function in indexedDB.js to delete post
+                           from indexedDB.
+                           -Later, upgrade this to get the ID from the Server,
+                           which would be much safer to execute the right
+                           code on the right response
+                           */
+                          // not working correctly because for-loops don't always work
+                          // correctly  with asynchronous code.  I will fix this later.
+                          deleteSingleItemFromIdbStore('sync-posts', responseData.id);
+                        })
               }
             })
             .catch(error => {
-              console.log('[Service Worker] Sync listener => Error with sending data: ', error);
+              console.log('[Service Worker] Sync listener => Error while sending data: ', error);
             })
-          
         }  // end for loop
-        
       })
   )
-  
 });
-
-
-
-
 
 
 
@@ -545,7 +532,6 @@ self.addEventListener('fetch', event => {
     )
   }  // End Dynamic Caching with Network Fallback and Offline Fallback Page Strategy
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
-
 */
 
 
@@ -575,7 +561,6 @@ self.addEventListener('fetch', event => {
           })
   )
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
-
 */
 
 
@@ -587,7 +572,6 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
   )
 });  // End CACHE ONLY
-
 */
 
 
@@ -733,7 +717,6 @@ self.addEventListener('fetch', event => {
           })
   )
 });  // End Cache on Demand. Use Case: button triggers caching
-
 */
 
 

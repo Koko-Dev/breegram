@@ -105,7 +105,6 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 // Currently not in use; allows to save assets in cache on demand otherwise
 // For clicked button to save Card
 // Receives the event from addEventListener click event
-/*
 function onSaveButtonClicked(event) {
   console.log('Clicked');
   
@@ -121,7 +120,7 @@ function onSaveButtonClicked(event) {
             cache.add('/src/images/breeGrams1.jpeg');
           })
   }
-}*/
+}
 
 // Helper function to clear the last card
 function clearCards() {
@@ -194,14 +193,12 @@ function createCard(data) {
 }
 
 
-
 const url = 'https://httpbin.org/get';
 const posturl = 'https://httpbin.org/post';
 
 // Backend
-// const firebase_posts = 'https://breegram-instagram.firebaseio.com/posts.json';
-const firebase_posts = 'https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
-
+// const firebasePosts = 'https://breegram-instagram.firebaseio.com/posts.json';
+const firebasePosts = 'https://us-central1-breegram-instagram.cloudfunctions.net/storePostData.json';
 let networkDataReceived = false;
 
 
@@ -258,7 +255,7 @@ if('indexedDB' in window) {
 // If this get request fails, then createCard() does not happen here
 // This kicks off our Cache, then Network Strategy and
 //   must be loaded first.  Ensure this in SW fetch event.
-fetch(firebase_posts)
+fetch('https://breegram-instagram.firebaseio.com/posts.json')
   .then(response => {
     return response.json();
   })
@@ -270,7 +267,7 @@ fetch(firebase_posts)
     // Creates the Card dynamically by looping through the firebase object 'posts'
     // Since the data from firebase is an Object we will convert the data into an Array
     //   in order to e able to loop through each post in updateUI
-    dataArray = [];
+    let dataArray = [];
     for(let key in data) {
       // console.log('[feed.js] key: ', key);
   
@@ -284,11 +281,11 @@ fetch(firebase_posts)
   });
 
 
-/*  Send data to the backend  (var firebase_posts)
+/*  Send data to the backend  (var firebasePosts)
 *   Used if client Browser does not support syncManager interface or Service Workers
 */
 function sendData (){
-  fetch(firebase_posts, {
+  fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -309,7 +306,6 @@ function sendData (){
       updateUI();
     })
 }
-
 /* Register a submit listener from the form submit (post) button */
 form.addEventListener('submit', event => {
   console.log('[feed.js] Post!');
@@ -447,7 +443,7 @@ form.addEventListener('submit', event => {
 // Getting the card from the Cache
 // For Cache first and Network with Dynamic Caching
 if('caches' in window) {
-  caches.match(firebase_posts)
+  caches.match(firebasePosts)
         .then(response => {
           if(response) {
             return response.json();
