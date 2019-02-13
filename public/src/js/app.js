@@ -35,6 +35,14 @@ window.addEventListener('beforeinstallprompt', event => {
   
 });
 
+/* Confirm that Permission to receive Notifications was granted */
+function displayConfirmationNotification() {
+  // Pass a title for this notification
+  // This will show a Real System Notification, not like a JS alert
+  new Notification('Successfully subscribed!');
+  
+}
+
 
 
 /*
@@ -56,17 +64,17 @@ function askForNotificationPermission() {
    -- If User is undecided and just closes the tab, then they will be asked again next time
    */
   Notification.requestPermission(resultOfUserChoice => {
-    console.log('User choice to receive Notifications: ', resultOfUserChoice);
+    // console.log('User choice to receive Notifications: ', resultOfUserChoice);
     if(resultOfUserChoice !== 'granted'){
-      console.log('No notification permission granted');
+      console.log('No notification permission granted => ', resultOfUserChoice);
     } else {
       // Permission received and we can hide the button now
       // For testing purposes, I will not do this yet
       // At this point, we are receiving the 'granted' status
       //   but for some reason, Chrome did not deploy the
       //   popup asking to allow for notifications
-      console.log('Permission received');
-      
+      console.log('Permission received => ', resultOfUserChoice);
+      displayConfirmationNotification();
     }
   });
 
