@@ -35,3 +35,13 @@ window.addEventListener('beforeinstallprompt', event => {
   
 });
 
+
+// Enable Notification Button display if the client window supports Notifications
+if('Notification' in window) {
+  // Loop through the Notification buttons
+  for(let i = 0; i < enableNotificationsButtons.length;i++){
+    enableNotificationsButtons[i].style.display = "inline-block";
+  }
+
+}
+
