@@ -60,8 +60,13 @@ function askForNotificationPermission() {
     if(resultOfUserChoice !== 'granted'){
       console.log('No notification permission granted');
     } else {
-      // Permission received
+      // Permission received and we can hide the button now
+      // For testing purposes, I will not do this yet
+      // At this point, we are receiving the 'granted' status
+      //   but for some reason, Chrome did not deploy the
+      //   popup asking to allow for notifications
       console.log('Permission received');
+      
     }
   });
 
