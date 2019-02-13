@@ -37,14 +37,25 @@ window.addEventListener('beforeinstallprompt', event => {
 
 /* Confirm that Permission to receive Notifications was granted */
 function displayConfirmationNotification() {
-  const options = {
-    body: 'You are a Rock Star!'
-  };
+  
   /*
    Pass a title for this notification
    This will show a Real System Notification, not like a JS alert
+   (I have since used the Service Worker Registration to push a notification)
    */
-  new Notification('Successfully subscribed!', options);
+  // new Notification('Successfully subscribed!', options);
+  
+  if('serviceWorker' in navigator) {
+    const options = {
+      body: 'You are a Rock Star!'
+    };
+    
+    navigator.serviceWorker.ready
+      .then(serviceWorkerRegistration => {
+        serviceWorkerRegistration.showNotification('(From SW) You have successfully subscribed!', options);
+      })
+    
+  }
 }
 
 
