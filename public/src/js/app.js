@@ -32,15 +32,19 @@ window.addEventListener('beforeinstallprompt', event => {
   // Do not do anything upon this event (return false;) because we want to
   //    do something once the user clicks the plus icon (code in feed.js)
   return false;
-  
 });
+
 
 /* Confirm that Permission to receive Notifications was granted */
 function displayConfirmationNotification() {
-  // Pass a title for this notification
-  // This will show a Real System Notification, not like a JS alert
-  new Notification('Successfully subscribed!');
-  
+  const options = {
+    body: 'You are a Rock Star!'
+  };
+  /*
+   Pass a title for this notification
+   This will show a Real System Notification, not like a JS alert
+   */
+  new Notification('Successfully subscribed!', options);
 }
 
 
