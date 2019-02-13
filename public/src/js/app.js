@@ -36,11 +36,48 @@ window.addEventListener('beforeinstallprompt', event => {
 });
 
 
-// Enable Notification Button display if the client window supports Notifications
+
+/*
+ -- Request Permission to send a Notification to the User
+ 
+ -- Theoretically, if we want to display a notification, the browser will automatically
+ prompt the user, but it is better to do it ourselves so that we can control the response
+ and when we ask for it.  In this case, we are asking for Permission when the User actively
+ clicks on a Enable Notifications button (so the chance of their agreeing to give us this
+ permission is pretty high.
+ */
+function askForNotificationPermission() {
+  /*
+   requestPermission will prompt the user to ask to give permission for notifications
+   The user has already clicked on a 'Enable Notifications button'
+   Note:  if you ask for Notification permissions, you implicitly get Push Notification
+   permissions
+   -- If User denies permission, we cannot ask again
+   -- If User is undecided and just closes the tab, then they will be asked again next time
+   */
+  Notification.requestPermission(resultOfUserChoice) {
+    console.log('User choice to receive Notifications: ', resultOfUserChoice);
+    if(resultOfUserChoice !== 'granted'){
+      console.log('No notification permission granted');
+    } else {
+      // Permission received
+    
+    
+    }
+  }
+
+}
+
+ /*
+    -- Enable Notification Button display if the client window supports Notifications
+         and trigger the Permission request
+ */
+
 if('Notification' in window) {
   // Loop through the Notification buttons
   for(let i = 0; i < enableNotificationsButtons.length;i++){
     enableNotificationsButtons[i].style.display = "inline-block";
+    enableNotificationsButtons.addEventListener('click', askForNotificationPermission);
   }
 
 }
