@@ -55,16 +55,15 @@ function askForNotificationPermission() {
    -- If User denies permission, we cannot ask again
    -- If User is undecided and just closes the tab, then they will be asked again next time
    */
-  Notification.requestPermission(resultOfUserChoice) {
+  Notification.requestPermission(resultOfUserChoice => {
     console.log('User choice to receive Notifications: ', resultOfUserChoice);
     if(resultOfUserChoice !== 'granted'){
       console.log('No notification permission granted');
     } else {
       // Permission received
-    
-    
+      console.log('Permission received');
     }
-  }
+  });
 
 }
 
@@ -77,7 +76,7 @@ if('Notification' in window) {
   // Loop through the Notification buttons
   for(let i = 0; i < enableNotificationsButtons.length;i++){
     enableNotificationsButtons[i].style.display = "inline-block";
-    enableNotificationsButtons.addEventListener('click', askForNotificationPermission);
+    enableNotificationsButtons[i].addEventListener('click', askForNotificationPermission);
   }
 
 }
