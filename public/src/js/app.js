@@ -47,7 +47,8 @@ function displayConfirmationNotification() {
   
   if('serviceWorker' in navigator) {
     const options = {
-      body: 'You are a Rock Star!'
+      body: 'You are a Rock Star!',
+      icon: '/src/images/icons2/icon1-96x96.png'
     };
     
     navigator.serviceWorker.ready
