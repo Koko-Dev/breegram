@@ -1,4 +1,5 @@
 let promptDeferment;
+let enableNotificationsButtons = document.querySelectorAll('.enable-notifications ');
 
 if(!window.Promise) {
   window.Promise = Promise;
