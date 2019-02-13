@@ -40,7 +40,7 @@ function storeIntoObjectStore(storeName, data) {
 *
 * */
 function readDataInObjectStore(storeName) {
-  // Opend the IndexedDB Database 'posts-store'
+  // Open the IndexedDB Database 'posts-store'
   return dbPromise
     .then(db => {
       let tx = db.transaction(storeName, 'readonly');

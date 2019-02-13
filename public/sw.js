@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v60';
-const DYNAMIC_CACHE = 'dynamic-v60';
+const STATIC_CACHE = 'static-v66';
+const DYNAMIC_CACHE = 'dynamic-v66';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -196,6 +196,7 @@ self.addEventListener('fetch', event => {
   // We only want to use the Cache then Network strategy with url used to create card
   // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
   // const url = 'https://httpbin.org/get';
+  
   const url = 'https://breegram-instagram.firebaseio.com/posts';
   
   // Check to see if event.request.url contains this string ('https://httpbin.org/get')
@@ -389,11 +390,11 @@ self.addEventListener('sync', event => {
               id: dt.id,
               title: dt.title,
               location: dt.location,
-              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/breeGrams1.jpeg?alt=media&token=10ae4109-7b4d-417f-8267-1087b1a4ef56'
+              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/joshua-300.jpg?alt=media&token=e572561c-5c28-4cd0-be3f-f7423afb3383'
             })
           })
             .then(response=> {
-              console.log('Sent Data', response);
+              console.log('[Service Worker] Sent Data from sync event');
               /* Clean sync-posts object store one post at a time.
                * To be safe, check to see if response.ok is true
                 *  -- 'ok' is a helper property provided on the
