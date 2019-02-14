@@ -48,7 +48,12 @@ function displayConfirmationNotification() {
   if('serviceWorker' in navigator) {
     const options = {
       body: 'You are a Rock Star!',
-      icon: '/src/images/icons2/icon1-96x96.png'
+      icon: '/src/images/icons2/icon1-96x96.png',
+      image: '/src/images/waterbird-sm.jpg',
+      dir: 'ltr',
+      lang: 'en-US',
+      vibrate: [100, 50, 200],
+      badge: '/src/images/icons2/icon1-96x96.png'
     };
     
     navigator.serviceWorker.ready
