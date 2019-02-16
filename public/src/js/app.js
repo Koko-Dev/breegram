@@ -53,12 +53,14 @@ function displayConfirmationNotification() {
       dir: 'ltr',
       lang: 'en-US',
       vibrate: [100, 50, 200],
-      badge: '/src/images/icons2/icon1-96x96.png'
+      badge: '/src/images/icons2/icon1-96x96.png',
+      tag: 'confirm-notification',
+      renotify: false
     };
     
     navigator.serviceWorker.ready
       .then(serviceWorkerRegistration => {
-        serviceWorkerRegistration.showNotification('(From SW) You have successfully subscribed!', options);
+        serviceWorkerRegistration.showNotification('You have successfully subscribed!', options);
       })
     
   }
