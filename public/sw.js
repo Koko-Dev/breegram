@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v68';
-const DYNAMIC_CACHE = 'dynamic-v68';
+const STATIC_CACHE = 'static-v69';
+const DYNAMIC_CACHE = 'dynamic-v69';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -390,7 +390,7 @@ self.addEventListener('sync', event => {
               id: dt.id,
               title: dt.title,
               location: dt.location,
-              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/joshua-300.jpg?alt=media&token=e572561c-5c28-4cd0-be3f-f7423afb3383'
+              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/waterbird-main.jpg?alt=media&token=7dbd4e56-4f1c-4e46-9053-cc28997f87f2'
             })
           })
             .then(response=> {
