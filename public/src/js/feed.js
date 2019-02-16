@@ -296,7 +296,7 @@ function sendData (){
       id: new Date().toISOString(),
       title: titleInput.value,
       location: locationInput.value,
-      image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/joshua-300.jpg?alt=media&token=e572561c-5c28-4cd0-be3f-f7423afb3383'
+      image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/waterbird-main.jpg?alt=media&token=7dbd4e56-4f1c-4e46-9053-cc28997f87f2'
     })
   })
     .then(response=> {
