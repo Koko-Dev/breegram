@@ -453,6 +453,23 @@ self.addEventListener('notificationclick', event => {
 
 
 
+/*
+    -- On a Mac, when the user clicks on an Enable Notifications button,
+      the System Notification gives the option to close the notification  popup
+    Listen for this event
+    -- On Android, the notification can be swiped close or the user can hit the
+      'Delete All' (notifications) button
+
+      On the event that the user closes the system's notification popup,
+
+*/
+self.addEventListener('notificationclose', event => {
+    console.log('Notification was closed: ', event);
+})
+
+
+
+
 
 //  Caching Strategies
 
