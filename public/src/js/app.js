@@ -56,9 +56,10 @@ function displayConfirmationNotification() {
       badge: '/src/images/icons2/icon1-96x96.png',
       tag: 'confirm-notification',
       renotify: true,
+      requireInteraction: true,
       actions: [
           {action: 'confirm',
-           title: 'Excellent',
+           title: 'Okay',
            icon: '/src/images/icons2/icon1-96x96.png'
           },
           {

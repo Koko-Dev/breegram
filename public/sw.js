@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v70';
-const DYNAMIC_CACHE = 'dynamic-v70';
+const STATIC_CACHE = 'static-v71';
+const DYNAMIC_CACHE = 'dynamic-v71';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -425,6 +425,25 @@ self.addEventListener('sync', event => {
       })
   )
 });
+
+
+
+/*
+*   After the User clicks on an Enable Notifications button,
+*   we displayed two actions the user can take:
+*        1.  Verify that they are enabling Notifications -"Ok"
+*        2.  Cancel Notifications - "Cancel"
+*/
+self.addEventListener('notificationclick', event => {
+
+    let notification = event.notification;
+    let action = event.action;
+
+    console.log('User clicked on Okay or Cancel', notification, action);
+
+
+
+})
 
 
 
