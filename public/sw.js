@@ -439,10 +439,14 @@ self.addEventListener('notificationclick', event => {
     let notification = event.notification;
     let action = event.action;
 
-    console.log('User clicked on Okay or Cancel', notification, action);
+    // console.log('Notification is: ', notification);
+    // console.log('Action is: ', action);
 
+    if (action === 'confirm'){
+        console.log('Confirm was chosen');
+        notification.close();
 
-
+    }
 })
 
 
