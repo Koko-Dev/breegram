@@ -443,11 +443,13 @@ self.addEventListener('notificationclick', event => {
     // console.log('Action is: ', action);
 
     if (action === 'confirm'){
-        console.log('Confirm was chosen');
+        console.log('[Service Worker]  Confirm was chosen');
         notification.close();
-
+    } else {
+        console.log('[Service Worker]  The notification was not confirmed: ', action);
+        notification.close();
     }
-})
+});
 
 
 
