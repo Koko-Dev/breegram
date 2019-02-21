@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v69';
-const DYNAMIC_CACHE = 'dynamic-v69';
+const STATIC_CACHE = 'static-v70';
+const DYNAMIC_CACHE = 'dynamic-v70';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -35,7 +35,7 @@ const STATIC_FILES = [
 
  @param {string} cacheName - The name of the Cache to trim
  @param {number} maxItems - The maximum number of items allowed to stay in the cache
- 
+
 */
 function trimCache(cacheName, maxItems) {
   caches.open(cacheName)
@@ -56,18 +56,18 @@ function trimCache(cacheName, maxItems) {
 // install and activate are triggered by the Browser
 /*self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Service Worker ... ', event);
-  
+
   // caches.open() returns a promise --
   //    it  opens cache if it exists, or creates cache if doesn't
   // Note: The install event does not wait for caches.open() to load.
   //    To ensure it does, we use the waitUntil() method, which
   //    returns a promise, and install event now won't finish installation process
   //       until caches.open() has completed loading.
-  
+
   event.waitUntil(caches.open(STATIC_FILES)
     .then(theStaticCache => {
       console.log('[Service Worker] Pre-caching App Shell');
-      
+
       return theStaticCache.addAll(STATIC_FILES);
     }))
 });*/
@@ -82,7 +82,7 @@ self.addEventListener('install', function (event) {
     caches.open(STATIC_CACHE)
           .then(cache => {
             // console.log('[Service Worker] Pre-Caching App Shell');
-            
+
             // addAll() takes an Array of strings identifying the request.url's
             //  we want to cache,  but will fail all if even one request.url fails.
             // We can use cache.add() to store individual
@@ -101,7 +101,7 @@ self.addEventListener('install', function (event) {
  *      */
 self.addEventListener('activate', event => {
   // console.log('[Service Worker] Activating Service Worker ...', event);
-  
+
   /* First, we want to wait until we are done with the cleanup
            before we continue, so we use waitUntil()
      If we do not do this, a fetch event may be triggered delivering
@@ -114,7 +114,7 @@ self.addEventListener('activate', event => {
     caches.keys()
       .then(keyList => {
         // console.log('Service Worker', keyList);
-        
+
         // Promise.all() takes an Array of Promises and waits for them all to finish
         // Using this so that we only return from this function once we are really
         //     done with the cleanup.
@@ -130,7 +130,7 @@ self.addEventListener('activate', event => {
           // (i.e. It will replace the given string in the keyInList with nothing)
           if(keyInList !== STATIC_CACHE && keyInList !== DYNAMIC_CACHE) {
             console.log('Service Worker: Removing old cache: ', keyInList);
-            
+
             //  caches.delete() returns a Promise and map() returns an Array
             //  The result of map() then, therefore, in this case,
             //      will return an Array of Promises.  Hence,
@@ -140,7 +140,7 @@ self.addEventListener('activate', event => {
         }))
       })
   );  // end waitUntil() in activate event
-  
+
   /*
     From: https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim
   * -- claim() method of 'Clients' allows active SW to set itself as the 'controller'
@@ -153,7 +153,7 @@ self.addEventListener('activate', event => {
   *           regularly over the network, or possibly via a different SW.
 */
   // return self.clients.claim();
-  
+
   /*
    Using claim() inside service worker's "activate" event listener
    so that clients loaded in the same scope do not need to be reloaded
@@ -166,18 +166,18 @@ self.addEventListener('activate', event => {
 
 /*
   Helper function for fetch event Static Cache Asset request.url
-  
+
   @param {string} string - The event.request.url
   @param {Array} array - The STATIC_FILES Array containing strings of the main request.url assets
-  
+
 */
 function isInArray(string, array) {
   let cachePath;
-  
+
   // Request targets domain where we serve the page from (i.e. NOT a CDN)
   if (string.indexOf(self.origin) === 0) {
     // console.log('matched ', string);
-    
+
     // Take the part of the URL AFTER the domain (e.g. after localhost:8080)
     cachePath = string.substring(self.origin.length);
   } else {
@@ -196,9 +196,9 @@ self.addEventListener('fetch', event => {
   // We only want to use the Cache then Network strategy with url used to create card
   // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
   // const url = 'https://httpbin.org/get';
-  
+
   const url = 'https://breegram-instagram.firebaseio.com/posts';
-  
+
   // Check to see if event.request.url contains this string ('https://httpbin.org/get')
   // If it does not then conditional is not greater than -1 (is -1)
   // If conditional is true, then we want to use the Cache, then Network Strategy
@@ -290,7 +290,7 @@ self.addEventListener('fetch', event => {
                    //   - This has a bad side effect that if at some point some other request
                    //   like fetching JSON from a url we can't reach, this will also be returned
                    //   Fine tuning required - will modify depending on route of resource, etc..
-                   
+
                    /*if(event.request.url.indexOf('/help') > -1) {
                      // if the event.request.url contains /help, then
                      //   then I know that it tried and failed to load
@@ -299,7 +299,7 @@ self.addEventListener('fetch', event => {
                      //   which was pre-cached in the install event
                      return cache.match('/offline.html')
                    }*/
-                 
+
 
                    // An improved conditional
                    // As I add more pages, would have needed to add conditions
@@ -341,29 +341,29 @@ self.addEventListener('sync', event => {
   // Backend
   // const firebasePosts = 'https://breegram-instagram.firebaseio.com/posts.json';
   let firebasePosts = 'https://us-central1-breegram-instagram.cloudfunctions.net/storePostData';
-  
+
   /*
    At this point, I want to send the request to the Server
    because, from this point,  because I know that we have an internet
    connection.
    */
   console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
-  
+
   /*
   *
      -- In theory, we could have many sync tags and would want
      to do different things for each.
-     
+
      -- I registered a sync tag, 'sync-new-post' in feed.js
          and would like to handle it here
    */
-  
+
   // Check for to see if there is an event tag
   if(event.tag === 'sync-new-post') {
     // If you have different sync tags, use a switch case
     console.log('[Service Worker]- Syncing new Posts', event.tag);
   }
-  
+
   //  Read and Send all post data
   event.waitUntil(
     readDataInObjectStore('sync-posts')
@@ -378,7 +378,7 @@ self.addEventListener('sync', event => {
            posts queued up for synchronization
            -- For now, I will temporarily hard-code the image
         */
-        
+
         for(let dt of data) {
           fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
             method: 'POST',
@@ -441,7 +441,7 @@ self.addEventListener('fetch', event => {
   // For all else, we use the Dynamic Caching with Offline Fallback Page Strategy
   // const url = 'https://httpbin.org/get';
   const url = 'https://breegram-instagram.firebaseio.com/posts';
-  
+
   // Check to see if event.request.url contains this string ('https://httpbin.org/get')
   // If it does not then conditional is not greater than -1 (is -1)
   // If conditional is true, then we want to use the Cache, then Network Strategy
@@ -491,7 +491,7 @@ self.addEventListener('fetch', event => {
                                    // we can only use each parameter/response Once
                                    // Network response is stored in cache and the other goes to user.
                                    cache.put(event.request.url, networkResponse.clone());
-            
+
                                    // Return response to the user to get what they requested
                                    return networkResponse;
                                  })
@@ -501,7 +501,7 @@ self.addEventListener('fetch', event => {
                     console.log('Service Worker -- Error: ', error);
                     return caches.open(STATIC_CACHE)
                                  .then(cache => {
-                                   
+
                                    // Get the Offline Fallback page and return it
                                    // The command for getting something is cache.match()
                                    // Drawback is whenever we make an HTTP request where we can't get a valid
@@ -509,7 +509,7 @@ self.addEventListener('fetch', event => {
                                    //   - This has a bad side effect that if at some point some other request
                                    //   like fetching JSON from a url we can't reach, this will also be returned
                                    //   Fine tuning required - will modify depending on route of resource, etc..
-                                   
+
                                    if(event.request.url.indexOf('/help') > -1) {
                                      // if the event.request.url contains /help, then
                                      //   then I know that it tried and failed to load
@@ -518,8 +518,8 @@ self.addEventListener('fetch', event => {
                                      //   which was pre-cached in the install event
                                      return cache.match('/offline.html')
                                    }
-                                   
-                                   
+
+
                                    // An improved conditional
                                    // As I add more pages, would have needed to add conditions
                                    // i.e. if(event.request.url.indexOf('/help') || event.request.url.indexOf('/petunia')
@@ -597,7 +597,7 @@ self.addEventListener('fetch', event => {
  */
 /*self.addEventListener('fetch', (event) => {
   // console.log('[Service Worker] Fetch Event triggered ... ', event.request.url);
-  
+
   // Fetch the data from the cache, if available
   // event.request must be a request object, never a string
   // caches.match requests a request object which are our cache keys
@@ -655,7 +655,7 @@ self.addEventListener('fetch', event => {
                   // we can only use each parameter/response Once
                   // Network response is stored in cache and the other goes to user.
                   cache.put(event.request.url, networkResponse.clone());
-                  
+
                   // Return response to the user so that they get what they requested
                   return networkResponse;
                 })
@@ -705,7 +705,7 @@ self.addEventListener('fetch', event => {
                                .then(cache => {
                                  // Temporarily disable cache.put() to simulate Use Case
                                   /!*cache.put(event.request.url, networkResponse.clone());*!/
-              
+
                                  // Return the response to the user
                                  //      so that they get what they requested
                                  return networkResponse;
@@ -749,7 +749,7 @@ self.addEventListener('fetch', event => {
                                  // we can only use each parameter/response Once
                                  // Network response is stored in cache and the other goes to user.
                                  cache.put(event.request.url, networkResponse.clone());
-              
+
                                  // Return response to the user to get what they requested
                                  return networkResponse;
                                })

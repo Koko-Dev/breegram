@@ -28,7 +28,7 @@ window.addEventListener('beforeinstallprompt', event => {
   console.log('beforeinstallprompt fired');
   event.preventDefault();  // Now Chrome will not show the banner
   promptDeferment = event;
-  
+
   // Do not do anything upon this event (return false;) because we want to
   //    do something once the user clicks the plus icon (code in feed.js)
   return false;
@@ -37,14 +37,14 @@ window.addEventListener('beforeinstallprompt', event => {
 
 /* Confirm that Permission to receive Notifications was granted */
 function displayConfirmationNotification() {
-  
+
   /*
    Pass a title for this notification
    This will show a Real System Notification, not like a JS alert
    (I have since used the Service Worker Registration to push a notification)
    */
   // new Notification('Successfully subscribed!', options);
-  
+
   if('serviceWorker' in navigator) {
     const options = {
       body: 'You are a Rock Star!',
@@ -55,14 +55,25 @@ function displayConfirmationNotification() {
       vibrate: [100, 50, 200],
       badge: '/src/images/icons2/icon1-96x96.png',
       tag: 'confirm-notification',
-      renotify: false
+      renotify: true,
+      actions: [
+          {action: 'confirm',
+           title: 'Excellent',
+           icon: '/src/images/icons2/icon1-96x96.png'
+          },
+          {
+            action: 'cancel',
+            title: 'Cancel',
+            icon: '/src/images/icons2/icon1-96x96.png'
+          }
+      ]
     };
-    
+
     navigator.serviceWorker.ready
       .then(serviceWorkerRegistration => {
         serviceWorkerRegistration.showNotification('You have successfully subscribed!', options);
       })
-    
+
   }
 }
 
@@ -70,7 +81,7 @@ function displayConfirmationNotification() {
 
 /*
  -- Request Permission to send a Notification to the User
- 
+
  -- Theoretically, if we want to display a notification, the browser will automatically
  prompt the user, but it is better to do it ourselves so that we can control the response
  and when we ask for it.  In this case, we are asking for Permission when the User actively
