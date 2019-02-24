@@ -78,6 +78,12 @@ function displayConfirmationNotification() {
   }
 }
 
+function configPushSubscription() {
+//  First ask if I do not have access to the Service Worker
+    if (!('serviceWorker' in navigator)) return;
+
+}
+
 
 
 /*
@@ -109,7 +115,14 @@ function askForNotificationPermission() {
       //   but for some reason, Chrome did not deploy the
       //   popup asking to allow for notifications
       console.log('Permission received => ', resultOfUserChoice);
-      displayConfirmationNotification();
+
+      /*  Call configPushSubscription() function here instead of
+            the displayConfirmationNotification() function after I ask for
+            permission because I know now that I can send Notifications, so
+            I now want to setup the Push subscription
+        *   */
+      // displayConfirmationNotification();
+        configPushSubscription();
     }
   });
 
