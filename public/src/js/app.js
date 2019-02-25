@@ -133,7 +133,7 @@ function askForNotificationPermission() {
          and trigger the Permission request
  */
 
-if('Notification' in window) {
+if('Notification' in window && 'serviceWorker' in navigator) {
   // Loop through the Notification buttons
   for(let i = 0; i < enableNotificationsButtons.length;i++){
     enableNotificationsButtons[i].style.display = "inline-block";
