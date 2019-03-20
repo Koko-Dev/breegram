@@ -17,18 +17,18 @@ if(!window.Promise) {
 
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
-  
+
   // createPostArea.style.display = 'block';
-  
+
   /*setTimeout(() => {
     createPostArea.style.transform = 'translateY(0)';
   }, 1);*/
-  
+
   createPostArea.style.transform = 'translateY(0)';
-  
+
   // createPostArea.style.transform = 'translateY(0)';
-  
-  
+
+
   // Check to see if we previously were able to be prompted to install the app install banner
   //   because we can't show it on our own; we need to at least have had Chrome try to do so
   // So, we check to see if the promptDeferment from app.js 'beforeinstallprompt' event was  fired
@@ -37,24 +37,24 @@ function openCreatePostModal() {
     // promptDeferment is set, therefore it is not null or undefined
     // We call the prompt() method which will now show this banner
     promptDeferment.prompt();
-    
+
     // See what the user picked (whether or not they chose to install the banner)
     //     by using the Promise, userChoice()
     promptDeferment.userChoice.then(theChoiceResult => {
       console.log(theChoiceResult.outcome);
-      
+
       if(theChoiceResult.outcome === 'dismissed') {
         console.log('User cancelled installation');
       } else {
         console.log('User added banner to the home screen')
       }
     });
-    
+
     // Set promptDeferment equal to null because you only have one shot to prompt the user
     //    to install the banner.  They can enable banner manually if they canceled installation
     promptDeferment = null;
   }
-  
+
   // For testing purposes, unregister the Service Worker when plus is clicked
   // In Applications/Service Worker tab, as soon as plus button is clicked
   //     it will show that the Service Worker has been deleted
@@ -76,7 +76,7 @@ closeTheFab.addEventListener('click', closeCreatePostModal);
 function closeCreatePostModal() {
   createPostArea.style.transform = 'translateY(100vh)';
   // createPostArea.style.display = 'none';
-  
+
 }
 /*
 * shareImageButton from #share-image-button, from public/index.html, line 131
@@ -107,7 +107,7 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 // Receives the event from addEventListener click event
 function onSaveButtonClicked(event) {
   console.log('Clicked');
-  
+
   // Check to make sure Browser accepts the Cache API
   // We can add an else statement that removes the button if
   //    the browser does not support caching later
@@ -124,7 +124,7 @@ function onSaveButtonClicked(event) {
 
 // Helper function to clear the last card
 function clearCards() {
-  
+
   // sharedMomentsArea are where cards are appended (#shared-moments)
   // while-loop will remove one child at a time and,
   //       once all children are removed, it quits
@@ -138,23 +138,23 @@ function clearCards() {
 
 // Creates the cards based on data from  get request to firebase database of posts
 function createCard(data) {
-  
+
   // console.log('DATA FOR CARD', data);
   let cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
-  
+
   let cardImage = document.createElement('div');
   cardImage.className = 'mdl-card__title';
   // cardImage.style.backgroundImage = 'url("/src/images/breeGrams1.jpeg")';
   cardImage.style.backgroundImage =  'url(' + data.image + ')';
-  
+
   cardImage.style.backgroundSize = 'cover';
-  
+
   // cardImage.style.height = '180px';
-  
-  
+
+
   cardWrapper.appendChild(cardImage);
-  
+
   let cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
   // cardTitleTextElement.textContent = 'Bronx Trip';
@@ -164,9 +164,9 @@ function createCard(data) {
   cardTitleTextElement.style.fontWeight = '700';
   cardTitleTextElement.style.textShadow = '2px 2px #20262A';
   cardTitleTextElement.style.backgroundPosition = 'center';
-  
+
   cardImage.appendChild(cardTitleTextElement);
-  
+
   let cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
   // cardSupportingText.textContent = 'Bronx, NY';
@@ -174,19 +174,19 @@ function createCard(data) {
   cardSupportingText.style.textAlign = 'center';
   cardSupportingText.style.color = '#5B5E6F';
   cardSupportingText.style.textShadow = '1px 1px #9F9997';
-  
+
   // Add a button to save the card for User Triggered fetch event
   //  Commented out for future possible capability
   //  Dynamic Caching re-added in its place
  /*
  let cardSaveButton = document.createElement('button');
   cardSaveButton.textContent = 'Save';
-  
+
   // Add event listener click event
   cardSaveButton.addEventListener('click', onSaveButtonClicked);
   cardSupportingText.appendChild(cardSaveButton);
   */
- 
+
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
@@ -231,14 +231,14 @@ if('indexedDB' in window) {
   readDataInObjectStore('posts')
     .then(data => {
       // data is an Array of all of the values returned fro getAll()
-      
+
       // Check to see if the network data was received because if we did, we don't want to
       //     override it with the cache
       if(!networkDataReceived) {
         // We did not receive the data from the Network,
         //    so we have to get it from indexedDB store
-        console.log('Network Data was not received, so ==> From indexedDB store: ', data);
-        
+        // console.log('Network Data was not received, so ==> From indexedDB store: ', data);
+
         // Call updateUI(data) which already expects an Array of data
         //   to create a card for each post in the Array of data from readDataInObjectStore()
         updateUI(data);
@@ -263,19 +263,19 @@ fetch('https://breegram-instagram.firebaseio.com/posts.json')
     networkDataReceived = true;
     // clearCards();
     // createCard();
-    
+
     // Creates the Card dynamically by looping through the firebase object 'posts'
     // Since the data from firebase is an Object we will convert the data into an Array
     //   in order to e able to loop through each post in updateUI
     let dataArray = [];
     for(let key in data) {
       // console.log('[feed.js] key: ', key);
-  
+
       dataArray.push(data[key]);
     }
-    
-    console.log('[feed.js] Array of  Posts in firebase from the WEB', dataArray);
-    
+
+    // console.log('[feed.js] Array of  Posts in firebase from the WEB', dataArray);
+
     // Clear the last card and create a new one
     updateUI(dataArray);
   });
@@ -301,7 +301,7 @@ function sendData (){
   })
     .then(response=> {
       console.log('Data Sent', response);
-      
+
       //  Update the UI after the data has been sent
       // because now we can fetch data from the backend
       updateUI();
@@ -318,7 +318,7 @@ form.addEventListener('submit', event => {
    so we cancel default.
    */
   event.preventDefault();
-  
+
   /*
    Check to see if #title and #location from index.html
    (html input tags for title and location information)
@@ -334,16 +334,16 @@ form.addEventListener('submit', event => {
      */
     return;
   }
-  
+
   // Close the post modal
   closeCreatePostModal();
-  
+
   /*
    Register a Sync request:
    Use cases:
         -- If there is no or connectivity with server is not in sync or absent
         -- If the user closes tab too quickly
- 
+
    Check to see that we do have access to service worker in given browser
    If no service worker access, then we cannot register background sync
    Check to see if the SyncManager interface of the ServiceWorker API is
@@ -378,37 +378,37 @@ form.addEventListener('submit', event => {
           title: titleInput.value,
           location: locationInput.value
         };
-        
+
         /*
           We can now interact with the Service Worker
           We do it this way because we are not in sw.js and the event
           that triggers the SyncManager happens in feed.js (the form submission).
-          
+
           We cannot listen to the SyncManager in sw.js because we
            do not have access to the DOM there (form submit listener in feed.js)
-          
+
           Register a Synchronization Task (sync tag)
           i.e.  sw.sync.register('sync-new-post');
-          
+
            -- This gives us access to the SyncManager from the SW's point of view.
            -- Takes tag as the input
-           
+
          At this point we do not have all of the info
          We need to pass information:
            -- find out what we should do,
            -- what we should send (titleInput.value, locationInput.value),
            -- what data we want to send with that request.
- 
+
          Next step, then, is to configure the data we want to synchronize,
          send, and then store in indexedDB;
-          
+
           Used to reestablish connectivity and
              check which outstanding tasks we have.
           Use the tag to see what we need to do with the task.
-          
+
           Requires a counterpart in the actual Service Worker (SW) and
               we need to pass it data/info to synchronize (i.e. post content).
-              
+
           Cannot pass post content to register() method the sync manager
                   does not have a built-in database,
             so we use IndexedDB to store post (location, title, id).
@@ -422,7 +422,7 @@ form.addEventListener('submit', event => {
         })
           .then(() => {
             let snackbarContainer = document.querySelector('#confirmation-toast');
-  
+
             // Materialize syntax for user toast message
             let data = {message: 'Your Post was saved for Background Sync'};
             snackbarContainer.MaterialSnackbar.showSnackbar(data);
@@ -455,7 +455,7 @@ if('caches' in window) {
           if(!networkDataReceived) {
             // clearCards();
             // createCard();
-  
+
             // Creates the Card dynamically by looping through the firebase object 'posts'
             // Since the data from firebase is an Object we will convert the data into an Array
             //   in order to e able to loop through each post in updateUI
@@ -464,7 +464,7 @@ if('caches' in window) {
               console.log('[feed.js] key: ', key);
               dataArray.push(data[key]);
             }
-  
+
             console.log('[feed.js] Array of Posts in firebase from the CACHE', dataArray);
             updateUI(dataArray);
           }
