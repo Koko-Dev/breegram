@@ -219,8 +219,8 @@ function askForNotificationPermission() {
                   permission because I know now that I can send Notifications, so
                   I now want to setup the Push subscription
               *   */
-            // displayConfirmationNotification();
-            configPushSubscription();
+            displayConfirmationNotification();
+            // configPushSubscription();
         }
     });
 

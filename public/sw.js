@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v80';
-const DYNAMIC_CACHE = 'dynamic-v80';
+const STATIC_CACHE = 'static-v82';
+const DYNAMIC_CACHE = 'dynamic-v82';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -463,8 +463,19 @@ self.addEventListener('notificationclick', event => {
       On the event that the user closes the system's notification popup,
 */
 self.addEventListener('notificationclose', event => {
+
+    /*  -- This is a great listener for sending analytics data to our server because
+    *    the User did not interact with our Notification (closed the Notification).
+    *    So, we can store the timestamp of the Notification and try to find out
+    *    why the Users did not interact.
+    */
     console.log('Notification was closed: ', event);
-})
+});
+
+
+
+
+
 
 
 
