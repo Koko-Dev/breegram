@@ -72,9 +72,8 @@ function displayConfirmationNotification() {
 
         navigator.serviceWorker.ready
             .then(serviceWorkerRegistration => {
-                serviceWorkerRegistration.showNotification('You have successfully subscribed!', options);
+                serviceWorkerRegistration.showNotification('Successfully subscribed!', options);
             })
-
     }
 }
 
@@ -203,7 +202,7 @@ function configPushSubscription() {
                 *   */
                 const convertedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
 
-                registration.pushManager.subscribe({
+                return registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: convertedVapidPublicKey
                 });
@@ -224,15 +223,38 @@ function configPushSubscription() {
                    We can send it to the Service Worker here for an update
                    or ignore it because we already have it stored on the
                    backend server.
-
                 */
-
             }
         })
-        .catch(error => {
-            console.log("An error, maybe no subscription =>", error);
-        })
 
+        .then(newSubscription => {
+            // Pass the New Subscription to the Firebase (backend) Server
+            // We want to store the subscription to our RealTime database.
+            // So we create a POST request to store the new subscription
+            // on Firebase Database.
+            // Issue a new POST request to https://breegram-instagram.firebaseio.com/subscriptions  (Database)
+            // and the Subscriptions Node will be added automatically.
+            // Always add .json when directly targeting the Database interface on Firebase
+            return fetch('https://breegram-instagram.firebaseio.com/subscriptions.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newSubscription)
+            })
+                .then(serverResponse => {
+                    if (serverResponse.ok) {
+                        console.log('Server Response for New Subscription POST request OK');
+
+                        // Display Confirmation Notification
+                        displayConfirmationNotification();
+                    }
+                })
+        })
+        .catch(error => {
+            console.log("Error after Subscription Post Request to Firebase Database", error);
+        })
 }
 
 
