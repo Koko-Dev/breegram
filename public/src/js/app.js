@@ -213,12 +213,11 @@ function configPushSubscription() {
                 *       clear identification of a server who is allowed to
                 *       send push messages.
                 *
-                *       -- This alone does not identify our server.
-                        We still have to store the Private Key on the Server.
-                        We have to store the Private key on the Server so that
-                        the Browser window or the Server will be able to match
+                *       -- This alone does not identify our backend Server.
+                        We have to store the Private key on the backend Server so that
+                        the Browser window or our backend Server will be able to match
                         the Public Key with its companion Private Key to authenticate
-                        that our Server can send push messages.
+                        our backend Server.  Only then can the User receive push messages.
                 */
             } else {
                 /* We have a subscription.
