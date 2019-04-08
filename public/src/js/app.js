@@ -217,7 +217,8 @@ function configPushSubscription() {
                         We still have to store the Private Key on the Server.
                         We have to store the Private key on the Server so that
                         the Browser window or the Server will be able to match
-                        the Public Key with its companion Private Key.
+                        the Public Key with its companion Private Key to authenticate
+                        that our Server can send push messages.
                 */
             } else {
                 /* We have a subscription.
