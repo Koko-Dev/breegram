@@ -78,8 +78,16 @@ function displayConfirmationNotification() {
     }
 }
 
+
+
+
 function configPushSubscription() {
 //  First ask if I do not have access to the Service Worker
+//  This is handled when we decide to display,  or choose to not display
+//   the enable notification button, so technically it will never get here,
+//   but, I will put it here for a reminder that push subscriptions
+//   are handled through the Service Worker
+//      (i.e. No Service Worker == No Push Notifications)
     if (!('serviceWorker' in navigator)) {
         return;
     }
@@ -87,17 +95,18 @@ function configPushSubscription() {
     /*
         Access the Service Worker from here and then access
           the pushManager to check for an existing subscription
+        (Subscriptions are managed by the Service Worker)
      */
 
     // Will store the Service Worker Registration for later use
     let registration;
 
     // Use serviceWorker.ready to ensure that you can subscribe for push
-    navigator.serviceWorker.ready.then(
+    //   notifications
+   /* navigator.serviceWorker.ready.then(
         function(serviceWorkerRegistration) {
             var options = {
                 userVisibleOnly: true
-
             };
             serviceWorkerRegistration.pushManager.subscribe(options).then(
                 function(pushSubscription) {
@@ -113,24 +122,23 @@ function configPushSubscription() {
                     console.log('Error at app.js for push notification', error);
                 }
             );
-        });
+        });*/
 
-
-   /* navigator.serviceWorker.ready
+    navigator.serviceWorker.ready
         .then(swregistration => {
             // Store the Service Worker Registration for later use
             registration = swregistration;
-            /!*
+            /*
                 Check for any existing subscription
                 getSubscription returns a promise which will resolve
                 with any subscriptions fetched and null otherwise
                 The pushManager will only check for subscriptions
                 for this browser on this device
-            *!/
+            */
             return swregistration.pushManager.getSubscription();
         })
-        .then(subscriptions => {
-            /!*
+        .then(subscription => {
+            /*
                 A subscription contains the URL endpoint of the
                 browser vendor server to which we push our push messages.
                 Anyone with this endpoint URL can send messages to that
@@ -138,29 +146,34 @@ function configPushSubscription() {
                 A hacking nightmare.
                 Protect by passing a configuration
                 to subscribe() with a JavaScript Object.
+
                 Null if there are no subscriptions on this browser
                 for this device (the service worker is also
                 registered in this browser for this device)
+
                 Each browser/device combination yields one
                 subscription
                 If subscriptions is null, create a new subscription.
-                If subscriptions is not null then we have existing
-                subscriptions.
-            *!/
-            if (subscriptions === null) {
-                /!*
+                If subscriptions is not null then we have an existing
+                subscription.
+            */
+            if (subscription === null) {
+                /*
                     Create a new subscription by accessing the pushManager
                     If there were a previous subscription, it would replace it.
                     Protection:
                         --Pass JS Object, setting userVisibility to true.
+                            This means that push notifications that we send
+                            are only visible to this user.
                           This ensures that messages can only come from our
                           backend server and that, should someone attain our
                           endpoint URL, they would not be able to push messages
                           to the API endpoint by the browser vendor server.
-                          So, the security mechanism is that I will identify my
+
+                          The security mechanism is that I will identify my
                           backend server as the only valid source sending push
                           notifications to the users
-                *!/
+                */
 
                 registration.pushManager.subscribe({
                     userVisibleOnly: true
@@ -168,20 +181,22 @@ function configPushSubscription() {
 
 
             } else {
-                /!* We have a subscription.
+                /* We have a subscription.
                    We can send it to the Service Worker here for an update
                    or ignore it because we already have it stored on the
                    backend server
-                *!/
+                */
 
             }
         })
         .catch(error => {
             console.log("An error, maybe no subscription =>", error);
         })
-*/
 
 }
+
+
+
 
 
 
@@ -201,6 +216,8 @@ function askForNotificationPermission() {
      permissions
      -- If User denies permission, we cannot ask again
      -- If User is undecided and just closes the tab, then they will be asked again next time
+
+     This code is from https://developer.mozilla.org/en-US/docs/Web/API/PushManager/subscribe
      */
     Notification.requestPermission(resultOfUserChoice => {
         // console.log('User choice to receive Notifications: ', resultOfUserChoice);
@@ -219,8 +236,8 @@ function askForNotificationPermission() {
                   permission because I know now that I can send Notifications, so
                   I now want to setup the Push subscription
               *   */
-            displayConfirmationNotification();
-            // configPushSubscription();
+            // displayConfirmationNotification();
+            configPushSubscription();
         }
     });
 
