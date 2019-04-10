@@ -474,6 +474,63 @@ self.addEventListener('notificationclose', event => {
 
 
 
+// Listen to Push Messages
+// push event will fire whenever we get an incoming push message
+// We get an incoming push message when subscribed user receives a push message
+
+/*
+*  https://developers.google.com/web/fundamentals/codelabs/push-notifications/
+*  Considering what will actually happen when a subscribed user receives a push message.
+
+      When we trigger a push message:
+       -- the browser receives the push message,
+       -- the browser figures out what service worker the push is for before waking up
+      that service worker and dispatching a push event.
+
+      We need to listen for this event and show a notification as a result.*/
+self.addEventListener('push', event => {
+
+  console.log('Push Notification received', event);
+
+  // Retrieve any data we sent with push notification
+  // The push message was sent from functions/index.js
+
+  // First check to see if our event.data object exists,
+  // i.e. if there is some data attached to the push event
+  //  -- the data object is from the push message we sent in the payload argument
+  //  which can be found in the .sendNotification payload argument in functions/index.js
+  //    Note: payload is limited to 4K from remote server, link to image is acceptable
+
+  // Set up some dummy data just in case there is no payload via push notification
+  let data ={title: 'New!', content: 'Something New Happened!'}
+  if (event.data) {
+    // We have data, so reassign to data var.
+    // Remember it was JSON.stringify(), so we convert to a JS Object and extract the text
+    data = JSON.parse(event.data.text());
+
+    // Use var data to show a New Notification
+    // First, set up some options for the Notification
+    const options = {
+      body: data.content,
+      icon: '/src/images/icons2/icon1-96x96-2.png',
+      badge: '/src/images/icons2/icon1-96x96-2.png'
+    };
+
+    // Display Notification
+    // Call event.waitUntil() to make sure the Service Worker (SW) waits
+    //    for me to really show this notification.
+    // This gives access to the SW but the active SW itself cannot show notifications
+    //   because SW is there to listen to events running in the background
+    // For this reason, we have to get access to the SW registration because
+    //    that is the part running in the Browser, so to speak,
+    //    the part connecting the SW to the Browser.
+    // i.e.  on self.registration, we can call .showNotification() just as before
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    )
+  }
+
+});
 
 
 
@@ -481,7 +538,18 @@ self.addEventListener('notificationclose', event => {
 
 
 
-//  Caching Strategies
+
+
+
+
+
+
+
+
+
+
+
+//  Caching Strategies for experimentation only
 
 //  Cache, then Network for 'https://httpbin.org/get' use to create card along with
 //  Dynamic Caching with Network Fallback and Offline Fallback Page Strategy

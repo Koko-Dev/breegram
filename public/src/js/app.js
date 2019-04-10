@@ -60,12 +60,12 @@ function displayConfirmationNotification() {
                 {
                     action: 'confirm',
                     title: 'Okay',
-                    icon: '/src/images/icons2/icon1-96x96.png'
+                    icon: '/src/images/icons2/icon1-96x96-2.png'
                 },
                 {
                     action: 'cancel',
                     title: 'Cancel',
-                    icon: '/src/images/icons2/icon1-96x96.png'
+                    icon: '/src/images/icons2/icon1-96x96-2.png'
                 }
             ]
         };
@@ -243,15 +243,15 @@ function configPushSubscription() {
                 },
                 body: JSON.stringify(newSubscription)
             })
-                .then(serverResponse => {
-                    if (serverResponse.ok) {
-                        console.log('Server Response for New Subscription POST request OK');
-
-                        // Display Confirmation Notification
-                        displayConfirmationNotification();
-                    }
-                })
         })
+      .then(serverResponse => {
+        if (serverResponse.ok) {
+          console.log('Server Response for New Subscription POST request OK');
+
+          // Display Confirmation Notification
+          displayConfirmationNotification();
+        }
+      })
         .catch(error => {
             console.log("Error after Subscription Post Request to Firebase Database", error);
         })
