@@ -86,6 +86,10 @@ function deleteSingleItemFromIdbStore(storeName, id) {
 
 /*  Used to convert the VAPID urlBase64 public key into
 *   an ArrayBuffer as required by the subscribe() API
+*
+*   Code from:  https://www.npmjs.com/package/web-push
+*   (Using VAPID Key for applicationServerKey)
+*
 *   */
 function urlBase64ToUint8Array(base64String) {
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
