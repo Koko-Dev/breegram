@@ -302,7 +302,6 @@ function askForNotificationPermission() {
             configPushSubscription();
         }
     });
-
 }
 
 /*
