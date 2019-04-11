@@ -447,8 +447,58 @@ self.addEventListener('notificationclick', event => {
         console.log('[Service Worker]  Confirm was chosen');
         notification.close();
     } else {
-        console.log('[Service Worker]  The notification was not confirmed: ', action);
-        notification.close();
+
+      console.log('[SW} Notification click not confirmed', action);
+
+
+      /*
+
+        TODO: Open a new page on Notification click in all cases where the action is not confirmed
+          To ensure that the Service Worker gives the time to
+          open a new page, use event.waitUntil()
+
+          Clients interface => provides access to Client objects
+            via self.clients within SW.
+          - https://developer.mozilla.org/en-US/docs/Web/API/Clients#Browser_compatibility
+          Note: Not compatible with IE or Safari
+
+          Clients.mathAll() returns a Promise for an array of
+            Client objects.  An options arg allows you to
+            control the types of clients returned.
+
+          Clients/WindowClient   =>  visibilityState
+
+          clients - all windows or all browser tasks related to and managed by this SW
+      */
+      event.waitUntil(
+        clients.matchAll()
+          .then(clientLIst => {
+            // clientLIst = managed by this SW  (array)
+
+            // Find Windows managed by this SW which are Visible
+            // (opened windows where our application runs)
+            // var client identifies the first window our app running the app
+            let client = clientLIst.find(firstTrueWindow => {
+              // First element in array that has visibilityState = true
+              // This means we have an open browser window running the app
+              return firstTrueWindow.visibilityState === 'visible';
+            });
+
+            // If we found an opened browser window
+            if (client !== undefined) {
+              client.navigate('http://localhost:8080');
+              client.focus();
+            } else {
+              // If there is no opened browser window running our app,
+              //    then we open a window/tab with our application loaded,
+              //    which is managed by this SW
+              clients.openWindow('http://localhost:8080');
+            }
+
+            notification.close();
+
+          })
+      );
     }
 });
 
