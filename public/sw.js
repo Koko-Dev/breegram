@@ -502,10 +502,14 @@ self.addEventListener('push', event => {
   //    Note: payload is limited to 4K from remote server, link to image is acceptable
 
   // Set up some dummy data just in case there is no payload via push notification
-  let data ={title: 'New!', content: 'Something New Happened!'}
+  let data ={title: 'New!', content: 'Something New Happened!'};
+
+  // Check to see if there is data in the push event, since it
+  //    was fired.
   if (event.data) {
-    // We have data, so reassign to data var.
-    // Remember it was JSON.stringify(), so we convert to a JS Object and extract the text
+    // We have data and can extract this data, so reassign to data var.
+    // Remember, in functions/index.js .sendNotification payload (data) was JSON.stringify(),
+    //   so we convert to a JS Object and extract the text
     data = JSON.parse(event.data.text());
 
     // Use var data to show a New Notification
@@ -516,20 +520,28 @@ self.addEventListener('push', event => {
       badge: '/src/images/icons2/icon1-96x96-2.png'
     };
 
-    // Display Notification
-    // Call event.waitUntil() to make sure the Service Worker (SW) waits
-    //    for me to really show this notification.
-    // This gives access to the SW but the active SW itself cannot show notifications
-    //   because SW is there to listen to events running in the background
-    // For this reason, we have to get access to the SW registration because
-    //    that is the part running in the Browser, so to speak,
-    //    the part connecting the SW to the Browser.
-    // i.e.  on self.registration, we can call .showNotification() just as before
+    /*
+
+      Display Notification
+        Call event.waitUntil() to make sure the Service Worker(SW)
+         waits for me to really show this notification.
+
+        This gives access to the SW, but the active SW itself
+        cannot show notifications because SW is there to listen
+        to events running in the background.
+
+        For this reason, we have to get access to the SW registration
+         (self.registration)  because that is the part running in
+         the Browser, so to speak, the part connecting the SW
+         to the Browser.
+
+        On self.registration, we can call .showNotification()
+           just as before
+   */
     event.waitUntil(
       self.registration.showNotification(data.title, options)
     )
   }
-
 });
 
 
