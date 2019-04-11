@@ -485,14 +485,15 @@ self.addEventListener('notificationclick', event => {
             });
 
             // If we found an opened browser window
+            //  Note:  Changed url from http://localhost:8080 to notification.data.openUrl
             if (client !== undefined) {
-              client.navigate('http://localhost:8080');
+              client.navigate(notification.data.url);
               client.focus();
             } else {
               // If there is no opened browser window running our app,
               //    then we open a window/tab with our application loaded,
               //    which is managed by this SW
-              clients.openWindow('http://localhost:8080');
+              clients.openWindow(notification.data.url);
             }
 
             notification.close();
@@ -552,7 +553,8 @@ self.addEventListener('push', event => {
   //    Note: payload is limited to 4K from remote server, link to image is acceptable
 
   // Set up some dummy data just in case there is no payload via push notification
-  let data ={title: 'New!', content: 'Something New Happened!'};
+  // Add url property to point to root page for testing because actual payload is /help
+  let data ={title: 'New!', content: 'Something New Happened!', openUrl: '/'};
 
   // Check to see if there is data in the push event, since it
   //    was fired.
@@ -564,10 +566,15 @@ self.addEventListener('push', event => {
 
     // Use var data to show a New Notification
     // First, set up some options for the Notification
-    const options = {
+    // -- Add data property url to point to payload openUrl property which points to /help
+    //    - Extract this data in the notificationclick event
+    let options = {
       body: data.content,
       icon: '/src/images/icons2/icon1-96x96-2.png',
-      badge: '/src/images/icons2/icon1-96x96-2.png'
+      badge: '/src/images/icons2/icon1-96x96-2.png',
+      data: {
+        url: data.openUrl
+      }
     };
 
     /*
