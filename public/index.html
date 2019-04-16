@@ -121,7 +121,27 @@
         
         <!-- Post Modal triggered by the plus button -->
         <div id="create-post">
+          <!-- Used when taking an image using device camera -->
+          <video src="" id="player" autoplay></video>
+          <canvas id="canvas" width="320px" height="240px"></canvas>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="capture-btn">Capture</button>
+          <!-- /#capture-btn.mdl-button mdl-js-button mdl-button--raised mdl-button--colored -->
+          <!-- /#canvas -->
+          <!-- /#player -->
+          
+          <!-- Upload an image instead -- Backwards Compatibility
+               Used when:
+              1. Device does not have a camera
+              2. Browser does not support using a camera -->
+          <div id="pick-image">
+            <h6>Upload and Image</h6>
+            <input type="file" id="image-picker" accept="image/*">
+            <!-- /#image-picker -->
+          </div>
+          <!-- /#pick-image -->
+          
           <form>
+            <!-- Title Input -->
             <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
               <input class="mdl-textfield__input"
                      type="text"
@@ -130,6 +150,7 @@
                      for="title"
                      name="title">Title</label>
             </div>
+            <!-- Location Input -->
             <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
                  id="manual-location">
               <input class="mdl-textfield__input"

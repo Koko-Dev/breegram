@@ -19,6 +19,21 @@ body {
   transition: transform 0.3s;
 }
 
+#create-post video, #create-post canvas {
+    width: 512px;
+    max-width: 100%;
+    display: none;
+    margin: auto;
+}
+
+#create-post #pick-image {
+    display: none;
+}
+
+#create-post #capture-btn {
+    margin: 10px auto;
+}
+
 
 .main-image {
   max-width: 100%;
@@ -149,7 +164,7 @@ body {
   }
   .shared-moment-card .mdl-card__title {
     height: 287px;
-    
+
   }
 }
 
@@ -160,7 +175,7 @@ body {
   }
   .shared-moment-card .mdl-card__title {
     height: 268px;
-    
+
   }
 }
 
@@ -182,7 +197,7 @@ body {
   }
   .shared-moment-card .mdl-card__title {
     height: 298px;
-    
+
   }
 }
 
@@ -194,7 +209,7 @@ body {
   }
   .shared-moment-card .mdl-card__title {
     height: 307px;
-    
+
   }
 }
 
@@ -215,11 +230,11 @@ body {
     margin: 10px auto;
     width: 65vw;
     /*height: 100%;*/
-    
+
   }
   .shared-moment-card .mdl-card__title {
     height: 316px;
-    
+
   }
 }
 
@@ -228,7 +243,7 @@ body {
     margin: 10px auto;
     width: 60vw;
     /*height: 100%;*/
-    
+
   }
   .shared-moment-card .mdl-card__title {
     height: 304px;
