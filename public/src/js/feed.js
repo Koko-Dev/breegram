@@ -7,8 +7,22 @@ let form = document.querySelector('form');
 let titleInput = document.querySelector('#title');
 let locationInput = document.querySelector('#location');
 
+/* Access the #create-post video, canvas, and
+     capture button to be able to take an image for a post */
+let videoPlayer = document.querySelector('#player');
+let canvasElement = document.querySelector('#canvas');
+let captureButton = document.querySelector('#capture-btn');
 
+/*
+  Access the image file input tag which uploads image file
+*/
+let imagePicker = document.querySelector('#image-picker');
 
+/*  Access to the #pick-image div to be able to hide the
+     ability to upload an image when the user's device
+     has access to a camera and when the Browser supports
+     using a camera. */
+let uploadImage = document.querySelector('#pick-image');
 
 if(!window.Promise) {
   window.Promise = Promise;
