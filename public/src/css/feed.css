@@ -35,6 +35,11 @@ body {
 }
 
 
+.mdl-spinner {
+    margin: auto;
+}
+
+
 .main-image {
   max-width: 100%;
   margin: auto;

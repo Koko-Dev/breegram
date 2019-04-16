@@ -122,9 +122,12 @@
         <!-- Post Modal triggered by the plus button -->
         <div id="create-post">
           <!-- Used when taking an image using device camera -->
-          <video src="" id="player" autoplay></video>
+          <video id="player" autoplay></video>
           <canvas id="canvas" width="320px" height="240px"></canvas>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="capture-btn">Capture</button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                  id="capture-btn">
+            Capture
+          </button>
           <!-- /#capture-btn.mdl-button mdl-js-button mdl-button--raised mdl-button--colored -->
           <!-- /#canvas -->
           <!-- /#player -->
@@ -160,7 +163,24 @@
                      for="location"
                      name="location">Location</label>
             </div>
+            
+            
+             <!--
+                  -- Button to get the User's location and a
+                  -- Loader/Spinner to display whilst fetching the Location to
+                       indicate that we are doing something -->
+            <div class="input-section">
+              <button class="mdl-button mdl-js-button mdl-button mdl-button--colored"
+                      type="button">
+                Get Location
+              </button>
+            <!-- /.mdl-button mdl-js-button mdl-button mdl-button--colored -->
+              <div class="mdl-spinner mdl-js-spinner is-active" id="location-loader"></div>
+              <!-- /#location-loader.mdl-spinner mdl-js-spinner is-action -->
+            </div>
+            <!-- /.input-section -->
             <br>
+            
             <div>
               <!-- submit listener registered in feed.js -->
               <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
@@ -169,6 +189,7 @@
               </button>
             </div>
             <br>
+            
             <div>
               <button class="mdl-button mdl-js-button mdl-button--fab" id="close-create-post-modal-btn" type="button">
               <i class="material-icons">close</i>
