@@ -28,6 +28,25 @@ if(!window.Promise) {
   window.Promise = Promise;
 }
 
+/*  Initialize Media -- Initializes the Camera or the Image Picker
+*   according to the features supported by the device */
+function initializeMedia() {
+  /*Check to see if we have media devices in the navigator
+    --  'mediaDevices' API is an interface which gives us access
+    to the device camera or microphone  (video or audio, respectively)
+    -- video includes images
+  */
+  if (!('mediaDevices' in navigator)) {
+    // No mediaDevices interface in the navigator,
+    //   so we create a polyfill to extend support a bit
+
+    // At this point there does not exist mediaDevices, so
+    //   I will create it.  It's just JavaScript, right?
+    navigator.mediaDevices = {};
+  }
+
+}
+
 
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
@@ -39,6 +58,10 @@ function openCreatePostModal() {
   }, 1);*/
 
   createPostArea.style.transform = 'translateY(0)';
+
+  // Initialize Camera in as many devices as possible
+  // We want to open it after the User clicks on the modal
+  initializeMedia();
 
   // createPostArea.style.transform = 'translateY(0)';
 
