@@ -45,6 +45,82 @@ function initializeMedia() {
     navigator.mediaDevices = {};
   }
 
+  // Now, this will never fail because even if mediaDevices
+  //   does not exist in the old browsers, I just created it above
+  // I do this to take advantage of some older camera implementations
+  // Note: We only do this if we are on a browser which doesn't have
+  //      a modern and valid implementation of media devices.
+  if (!('getUserMedia' in navigator.mediaDevices)) {
+    /*
+        --  getUserMedia does not exist.
+            - Set the getUserMedia equal to older properties which
+                performed the same service
+            - I am basically just rebuilding the native getUserMedia function
+              modern Browsers have.  We are not recreating the
+              mediaDevices interface, we are just bringing some older browsers
+              up to date with the new syntax
+        -- The constraints argument refers to whether I want to capture
+            audio or video
+        */
+    navigator.mediaDevices.getUserMedia = constraints =>  {
+      // Bind older implementations of getUserMedia to modern syntax
+      // webkit = Safari, moz = Mozilla
+      // Trying to bind older Safari and Mozilla GetUserMedia to current
+      let getUserMedia = navigator.webkitGetUserMedia  || navigator.mozGetUserMedia;
+
+      /*
+          Now we can check to see if those older Browsers have their own implementation
+            of getUserMedia.
+
+          -- https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+          -- "MediaDevices.getUserMedia() method prompts the user for permission to use
+          a media input which produces a MediaStream with tracks containing the
+          requested types of media.  That stream can include, for example, a video track
+          produced by either a hardware or virtual video source such as a camera,
+          video recording device, screen sharing service, and so forth), an audio track
+          (similarly, produced by a physical or virtual audio source like a microphone,
+          A/D converter, or the like), and possibly other track types.
+            -- It returns a Promise that resolves to a MediaStream Object.
+            -- If the user denies permission, or matching media is not available,
+               then the promise is rejected with NotAllowedError or NotFoundError, respectively.
+             Note: It's possible for the returned promise to neither resolve nor reject,
+                as the user is not required to make a choice at all and may simply
+                ignore the request."
+
+
+          If getUserMedia is still undefined, all hope is lost and we throw an error.
+          We will eventually need a fallback.
+
+      */
+      //  TODO:  If getUserMedia is undefined, throw Error, but create a fallback later
+      if ((!getUserMedia)) {
+
+        /* Return a Promise because we do want to rebuild the getUsermedia behavior since the
+           modern getUserMedia returns a Promise, so our own custom implementation
+           also has to.  Since we can't get it to work, then this Promise simply
+           rejects.*/
+        return Promise.reject(new Error('getUserMedia is not implemented'));
+      }
+
+      // At this point, we have getUserMedia
+      return new Promise((resolve,  reject) => {
+        /*
+          -- Since we are getting getUserMedia by pointing older browser's implementation
+               to the new getUserMedia, we are going to rebuild it a little bit.
+               -- We are going to call on the navigator so that inside getUserMedia refers to
+                 the navigator, and we pass the constraints, along with resolve and reject,
+                 so that whenever we call getUserMedia on media devices, we call that function
+                 which in the end returns a Promise which will automatically resolve the result
+                 of getUserMedia (which is this custom implementation of either webkit or Mozilla).
+*/
+        getUserMedia.call(navigator, constraints, resolve,  reject)
+      })
+
+      /*
+      *   If we make it past the if statement, then we know that we have a getUserMedia function */
+    }
+  }
+
 }
 
 
