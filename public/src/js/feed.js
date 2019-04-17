@@ -29,7 +29,12 @@ if(!window.Promise) {
 }
 
 /*  Initialize Media -- Initializes the Camera or the Image Picker
-*   according to the features supported by the device */
+*   according to the features supported by the device.
+*    -- By the end of the second if statement, we can always call
+*    mediaDevices.getUserMedia because it will either return a
+*    Promise which rejects and give us an Error or a
+*    Promise which will access the user media and give us a result
+*    which is in line to modern syntax. */
 function initializeMedia() {
   /*Check to see if we have media devices in the navigator
     --  'mediaDevices' API is an interface which gives us access
@@ -115,12 +120,55 @@ function initializeMedia() {
 */
         getUserMedia.call(navigator, constraints, resolve,  reject)
       })
-
-      /*
-      *   If we make it past the if statement, then we know that we have a getUserMedia function */
     }
-  }
+  } // At this point we can safely access navigator.mediaDevices.getUserMedia
 
+
+  /*
+    constraints -  "A MediaStreamConstraints object specifying the types
+        of media to request, along with any requirements for each type.
+
+        -- The constraints parameter is a MediaStreamConstraints object with
+      two members: video and audio, describing the media types requested.
+      Either or both must be specified.
+        -- If the browser cannot find all media tracks with the specified
+        types that meet the constraints given, then the returned promise
+        is rejected with NotFoundError.
+
+         constraint = { audio: true, video: true }
+
+        -- If true is specified for a media type, the resulting stream
+        is required to have that type of track in it. If one cannot be
+        included for any reason, the call to getUserMedia() will result
+        in an error.
+  */
+  // To get access to device camera - returns a Promise with a stream object
+  // Will prompt user for permission to use video once
+  navigator.mediaDevices.getUserMedia({video: true})
+    .then(mediaStreamObject => {
+      /*
+          -- Get access to the camera by binding the video source object to the stream
+          This will automatically play it because video tag is set to autoplay,
+          which give a nice experience if you just want to show an ongoing
+          image from the device camera.
+          -- Video player is now set up
+      */
+      videoPlayer.srcObject = mediaStreamObject;
+
+      //  Show the video player
+      // image picker and video player are hidden by default
+      videoPlayer.style.display = 'block';
+    })
+    .catch(error => {
+      // User has denied access or Browser does not have getUserMedia method
+      //   even with polyfill above.
+      // Or we are on a device that does not have a camera
+
+      // So, we show the image picker instead
+      // image picker and video player are hidden by default
+      imagePicker.style.display = 'block';
+
+    })
 }
 
 
@@ -190,7 +238,12 @@ function closeCreatePostModal() {
   createPostArea.style.transform = 'translateY(100vh)';
   // createPostArea.style.display = 'none';
 
+  // Modal closed. Hide the video player, image picker, and canvas.
+  videoPlayer.style.display = 'none';
+  imagePicker.style.display = 'none';
+  canvasElement.style.display = 'none';
 }
+
 /*
 * shareImageButton from #share-image-button, from public/index.html, line 131
     * <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored"
