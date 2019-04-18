@@ -24,6 +24,8 @@ let imagePicker = document.querySelector('#image-picker');
      using a camera. */
 let uploadImage = document.querySelector('#pick-image');
 
+let picture;
+
 if(!window.Promise) {
   window.Promise = Promise;
 }
@@ -241,17 +243,23 @@ captureButton.addEventListener('click', event => {
   //    of MediaStreamTrack objects representing the video tracks in this stream.
 
   // Stop the Video
-  //  Loop through the Video Tracks and stop each one
+  //  Loop through the Video Tracks and stop each video stream
   videoPlayer.srcObject.getVideoTracks().forEach(track => {
     track.stop();
   });
 
+  /*
+    The image is now a base64Url and we can technically we could upload
+    that and store it in the database, but storing such large strings
+    isn't the way to go with a database.  We want to store files on
+    a file server, our own server, or, since we are using Firebase at
+    this point, we want to store it in Firebase storage.
 
+    So, we will convert the canvas base64Url to a blob, so to a file.
+  */
+  picture = dataURItoBlob(canvasElement.toDataURL());
 
-
-
-
-})
+});
 
 
 
