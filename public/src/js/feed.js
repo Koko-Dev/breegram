@@ -256,6 +256,19 @@ captureButton.addEventListener('click', event => {
     this point, we want to store it in Firebase storage.
 
     So, we will convert the canvas base64Url to a blob, so to a file.
+
+    The HTMLCanvasElement.toDataURL() method returns a data URI containing a representation of the image in the format specified by the type parameter (defaults to PNG). The returned image is in a resolution of 96 dpi.
+
+    If the height or width of the canvas is 0, the string "data:," is returned.
+    If the requested type is not image/png, but the returned value starts with data:image/png, then the requested type is not supported.
+    Chrome also supports the image/webp type.
+
+    The function dataURItoBlob takes, as a parameter,
+        canvasElement.toDataURL()
+      and converts it into this data URI (the representation of the image
+      in specified format and Returns the blob.
+
+    A Blob object represents a file-like object of immutable, raw data.
   */
   picture = dataURItoBlob(canvasElement.toDataURL());
 
