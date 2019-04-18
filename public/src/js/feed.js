@@ -171,6 +171,92 @@ function initializeMedia() {
     })
 }
 
+/*
+*     Link the Capture Button with event listener
+*      -- Get the video element stream
+*      -- Send it to the canvas, and since the canvas is there
+*          to display static content, it will automatically take
+*          the latest snapshot and just display that
+*      --  Then, we stop the video player and all we get is
+*          a canvas element with the latest snapshot,
+*      -- And then extract the snapshot from the canvas element
+*/
+captureButton.addEventListener('click', event => {
+  // Capture button has been clicked, so, we set the
+  //   canvas and hide the video player and Capture button
+
+  // Show the Canvas Element, which is empty by default
+  canvasElement.style.display = 'block';
+
+  /*
+      Hide the Video Player
+
+      Note:  Even though we hide it, the stream is still
+      going on, So, we can do this first and still get
+      access to the currently running stream.
+   */
+  videoPlayer.style.display = 'none';
+
+  /*
+      Set Capture button display to none because we also
+      want to disable that once we take a screen shot.
+  */
+  captureButton.style.display = 'none';
+
+  // Now we get the stream onto the canvas
+
+  // Store the context of the canvas in a variable
+  // getContext() is a method where we initialize
+  //    how we want to draw on this canvas.
+  //    - In this case we just want to draw a '2d' image
+  //      (a screen shot or snapshot of my stream)
+
+  let context =  canvasElement.getContext('2d');
+
+  //  Use this 2d canvas context to draw an image, since it is
+  //    two-dimensional
+  //  Using videoPlayer as the Image Element (first argument) will give the stream
+  //  Then we have to define the boundaries (the dimensions of the canvas).
+  //  Start at the top left corner (0, 0) and expand to bottom right
+  //  Next param will be the Width -- Use the default canvas width, which we set up in CSS,
+  //    where we actually limit to the maximum  (max-width: 100%;)
+  //    because we have to contain the image inside the screen
+  //  Then calculate the Height -- canvas.height, which should fit the video aspect ratio
+  //     videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width)
+  //     -- Because the canvas width is set, and by dividing the video player width
+  //        by the canvas width, we get the portion of the original source that I can use.
+  //       - And then I can apply tis on the video player video height by simply dividing it through that.
+  //          This makes sure that I keep the aspect ratio
+  context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
+
+  // Now stop streaming the video because otherwise it keeps on going even though we've closed it.
+  //   to save resources and not scare the users.
+  // We stop the video by accessing the video player.
+  //   And on that video player, we can now access the source object
+  // (Line 156) -- videoPlayer.srcObject = mediaStreamObject --
+  //   That is where we added our stream and now you could think we just set it to null.
+  //      But we are not going to do that.  We will loop through getVideoTracks(),
+  //      which gives an array of tracks, and then stop each one individually.
+  //  The getVideoTracks() method of the MediaStream interface returns a sequence  (Array)
+  //    of MediaStreamTrack objects representing the video tracks in this stream.
+
+  // Stop the Video
+  //  Loop through the Video Tracks and stop each one
+  videoPlayer.srcObject.getVideoTracks().forEach(track => {
+    track.stop();
+  });
+
+
+
+
+
+
+})
+
+
+
+
+
 
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
