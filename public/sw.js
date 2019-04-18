@@ -316,6 +316,7 @@ self.addEventListener('fetch', event => {
 });  // End CACHE, then NETWORK with Dynamic Caching Strategy
 
 
+
 /*  Add Background Sync Capabilities
  *    -- Sync the data to the Service Worker
  *
@@ -334,7 +335,7 @@ self.addEventListener('fetch', event => {
  *       1.  React to Sync Event
  *       2.  Get data stored in sync-posts object store
  *       3.  Loop through stored data from sync-posts object store
- *       4.  Send a Post Request for each of the data pieces I stored
+ *       4.  Send a Post Request for each of the data pieces stored
  *       5.  Delete Post from indexedDB if we successfully sent it to the Server
  */
 self.addEventListener('sync', event => {
@@ -344,9 +345,8 @@ self.addEventListener('sync', event => {
 
   /*
    At this point, I want to send the request to the Server
-   because, from this point,  because I know that we have an internet
-   connection.
-   */
+     because I know that we have an internet connection.
+  */
   console.log('[Service Worker] => Sync event has fired - Background Syncing', event);
 
   /*
@@ -358,7 +358,7 @@ self.addEventListener('sync', event => {
          and would like to handle it here
    */
 
-  // Check for to see if there is an event tag
+  // Check to see if there is an event tag
   if(event.tag === 'sync-new-post') {
       // If you have different sync tags, use a switch case
       console.log('[Service Worker]- Syncing new Posts', event.tag);
@@ -377,6 +377,7 @@ self.addEventListener('sync', event => {
                      -- Use a for/of loop to gain access to all of the
                      posts queued up for synchronization
                      -- For now, I will temporarily hard-code the image
+                     -- At this point the cloud function accepts json data
                   */
 
                   for (let dt of data) {
