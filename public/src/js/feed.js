@@ -168,7 +168,7 @@ function initializeMedia() {
 
       // So, we show the image picker instead
       // image picker and video player are hidden by default
-      imagePicker.style.display = 'block';
+      uploadImage.style.display = 'block';
 
     })
 }
@@ -347,7 +347,7 @@ function closeCreatePostModal() {
 
   // Modal closed. Hide the video player, image picker, and canvas.
   videoPlayer.style.display = 'none';
-  imagePicker.style.display = 'none';
+  uploadImage.style.display = 'none';
   canvasElement.style.display = 'none';
 }
 
@@ -557,20 +557,23 @@ fetch('https://breegram-instagram.firebaseio.com/posts.json')
 /* Fallback sendData method:
   Send data to the backend  (var firebasePosts)
 *   Used if client Browser does not support syncManager interface or Service Workers
+*
+*   UPDATE:  Remove body value and replace with postData (FormData object)
 */
 function sendData (){
+  let id = new Date().toISOString();
+
+  // Using formData interface, append data properties
+  //  This is used in place of the POST body value
+  let postData =  new FormData();
+  postData.append('id', id);
+  postData.append('title', titleInput.value);
+  postData.append('location', locationInput.value);
+  postData.append('file', picture, id + '.png');
+
   fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      id: new Date().toISOString(),
-      title: titleInput.value,
-      location: locationInput.value,
-      image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/waterbird-main.jpg?alt=media&token=7dbd4e56-4f1c-4e46-9053-cc28997f87f2'
-    })
+    body: postData
   })
     .then(response=> {
       console.log('Data Sent', response);
@@ -645,11 +648,14 @@ form.addEventListener('submit', event => {
              -- id (new Date in string form as a unique identifier)
              -- title value, and
              -- location value
+
+             UPDATE:  This is going to indexedDB, so we will add picture
        */
         let post = {
           id: new Date().toISOString(),
           title: titleInput.value,
-          location: locationInput.value
+          location: locationInput.value,
+          picture: picture
         };
 
         /*

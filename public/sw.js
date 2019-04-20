@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v90';
-const DYNAMIC_CACHE = 'dynamic-v86';
+const STATIC_CACHE = 'static-v91';
+const DYNAMIC_CACHE = 'dynamic-v87';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -377,22 +377,37 @@ self.addEventListener('sync', event => {
                      -- Use a for/of loop to gain access to all of the
                      posts queued up for synchronization
                      -- For now, I will temporarily hard-code the image
-                     -- At this point the cloud function accepts json data
+                     -- At this point the cloud function accepts JSON data
+
+                     -- UPDATE:
+                        -- Because we have converted the base64Url
+                     image to a blob (file), we will no longer send
+                     JSON data. So, we will get rid of the headers specifying
+                     the Content-Type and Accept of JSON data so that it
+                     can now infer that it is receiving, instead a file/blob.
+                     NOTE:  We could keep the Accept header, but not mandatory
+                        -- postData var creates a new FormData Object
+                        This allows us to send form data to the backend
+                        through Ajax or fetch, and it will replace body value.
+
                   */
 
                   for (let dt of data) {
+
+                    // Using formData interface, append data properties
+                    //  This is used in place of the POST body value
+                    let postData =  new FormData();
+                    postData.append('id', dt.id);
+                    postData.append('title', dt.title);
+                    postData.append('location', dt.location);
+
+                    // Override dt.picture with dt.id + '.png'
+                    //   Defaults to a png
+                    postData.append('file', dt.picture, dt.id + '.png');
+
                       fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
                           method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json',
-                              'Accept': 'application/json'
-                          },
-                          body: JSON.stringify({
-                              id: dt.id,
-                              title: dt.title,
-                              location: dt.location,
-                              image: 'https://firebasestorage.googleapis.com/v0/b/breegram-instagram.appspot.com/o/waterbird-main.jpg?alt=media&token=7dbd4e56-4f1c-4e46-9053-cc28997f87f2'
-                          })
+                          body: postData
                       })
                           .then(response => {
                               console.log('[Service Worker] Sent Data from sync event');
