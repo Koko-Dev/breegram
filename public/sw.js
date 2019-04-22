@@ -3,8 +3,8 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v104';
-const DYNAMIC_CACHE = 'dynamic-v99';
+const STATIC_CACHE = 'static-v105';
+const DYNAMIC_CACHE = 'dynamic-v100';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
@@ -399,7 +399,7 @@ self.addEventListener('sync', event => {
                     let postData =  new FormData();
                     postData.append('id', dt.id);
                     postData.append('title', dt.title);
-                    // postData.append('location', dt.location);
+                    postData.append('location', dt.location);
                     postData.append('rawLocationLat', dt.rawLocation.lat);
                     postData.append('rawLocationLng', dt.rawLocation.lng);
 

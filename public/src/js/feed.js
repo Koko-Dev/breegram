@@ -669,7 +669,7 @@ function sendData (){
   let postData =  new FormData();
   postData.append('id', id);
   postData.append('title', titleInput.value);
-  // postData.append('location', locationInput.value);
+  postData.append('location', locationInput.value);
   postData.append('rawLocationLat', fetchedLocation.lat);
   postData.append('rawLocationLng', fetchedLocation.lng);
   postData.append('file', picture, id + '.png');
