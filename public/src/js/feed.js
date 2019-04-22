@@ -61,7 +61,10 @@ locationButton.addEventListener('click', event => {
       longitude: position.coords.longitude
     }*/
 
-    fetchedLocation ={latitude: position.coords.latitude, lng: position.coords.longitude};
+    fetchedLocation ={
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    };
 
     // Parsed address
     locationInput.value = "In Virginia";
