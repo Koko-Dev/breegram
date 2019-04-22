@@ -48,6 +48,23 @@ locationButton.addEventListener('click', event => {
   // Get the User's current position
   // Prompts user for permission
   navigator.geolocation.getCurrentPosition(function (position) {
+    // Success!
+    // We have a position. Re-enable the Location button,
+    //   and hide the loader/spinner
+    locationButton.style.display = 'inline';
+    locationLoader.style.display = 'none';
+    /*fetchedLocation = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    }*/
+
+    fetchedLocation ={latitude: position.coords.latitude, lng: position.coords.longitude};
+    locationInput.value = "In Virginia, USA";
+
+    // Required by third party library
+    //   to make it look correct once we manually set value
+    locationInput.classList.add('is-focused');
+
 
   }, function (err) {
     // Error, show location button and hide the spinner
@@ -55,8 +72,8 @@ locationButton.addEventListener('click', event => {
     locationButton.style.display = 'inline';
     locationLoader.style.display = 'none';
 
-    alert('So sorry!  Epic fail!  We could not find your location, please enter manually!');
-    fetchedLocation = null;
+    alert('Epic fail!  We could not fetch your location, please enter manually!');
+    fetchedLocation = {lat: null, lng: null};
 
     console.log(err);
 
