@@ -11,6 +11,7 @@ const STATIC_FILES = [
   '/',
   '/index.html',
   '/src/js/app.js',
+  '/src/js/indexedDB.js',
   '/src/js/feed.js',
   '/src/js/idb.js',
   '/src/js/promise.js',
