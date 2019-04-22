@@ -59,7 +59,9 @@ locationButton.addEventListener('click', event => {
     }*/
 
     fetchedLocation ={latitude: position.coords.latitude, lng: position.coords.longitude};
-    locationInput.value = "In Virginia, USA";
+
+    // Parsed address
+    locationInput.value = "Virginia";
 
     // Required by third party library
     //   to make it look correct once we manually set value
@@ -667,7 +669,9 @@ function sendData (){
   let postData =  new FormData();
   postData.append('id', id);
   postData.append('title', titleInput.value);
-  postData.append('location', locationInput.value);
+  // postData.append('location', locationInput.value);
+  postData.append('rawLocationLat', fetchedLocation.lat);
+  postData.append('rawLocationLng', fetchedLocation.lng);
   postData.append('file', picture, id + '.png');
 
   fetch('https://us-central1-breegram-instagram.cloudfunctions.net/storePostData', {
