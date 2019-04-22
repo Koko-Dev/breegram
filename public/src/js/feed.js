@@ -29,11 +29,30 @@ let picture;
 const locationButton = document.querySelector('#location-btn');
 const locationLoader = document.querySelector('#location-loader');
 
+
+
 /*  Add an event listener on the locaction button to get
 *     User Location */
 locationButton.addEventListener('click', event => {
+  // Geolocation is available
+
+
 
 })
+
+function initializeLocation () {
+  if (!('geolocation' in navigator)){
+    // We do not have geolocation capabilities
+    // Hide the Location Button
+    locationButton.style.display = 'none';
+    // locationLoader.style.display = 'none';
+
+  } else {
+    console.log('Initializing Location');
+
+  }
+
+}
 
 
 
@@ -322,6 +341,10 @@ function openCreatePostModal() {
   // Initialize Camera in as many devices as possible
   // We want to open it after the User clicks on the modal
   initializeMedia();
+
+  //  Initialize GeoLocation
+  initializeLocation();
+
 
   // createPostArea.style.transform = 'translateY(0)';
 
