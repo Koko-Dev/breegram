@@ -217,18 +217,18 @@ captureButton.addEventListener('click', event => {
 
   //  Use this 2d canvas context to draw an image, since it is
   //    two-dimensional
-  //  Using videoPlayer as the Image Element (first argument) will give the stream
+  //  Using videoPlayer as the Image Element is first argument we give the stream.
   //  Then we have to define the boundaries (the dimensions of the canvas).
   //  Start at the top left corner (0, 0) and expand to bottom right
   //  Next param will be the Width -- Use the default canvas width, which we set up in CSS,
   //    where we actually limit to the maximum  (max-width: 100%;)
   //    because we have to contain the image inside the screen
   //  Then calculate the Height -- canvas.height, which should fit the video aspect ratio
-  //     videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width)
+  //     videoPlayer.videoHeight / ( videoPlayer.videoWidth / canvas.width )
   //     -- Because the canvas width is set, and by dividing the video player width
   //        by the canvas width, we get the portion of the original source that I can use.
-  //       - And then I can apply tis on the video player video height by simply dividing it through that.
-  //          This makes sure that I keep the aspect ratio
+  //       - And then I can apply this to the video player video height by simply dividing it through that.
+  //          This ensures I keep the aspect ratio
   context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
 
   // Now stop streaming the video because otherwise it keeps on going even though we've closed it.
@@ -249,12 +249,16 @@ captureButton.addEventListener('click', event => {
   });
 
   /*
-    The image is now a base64Url and we can technically we could upload
+    The image is now a base64Url and technically we could upload
     that and store it in the database, but storing such large strings
     isn't the way to go with a database.  We want to store files on
     a file server, our own server, or, since we are using Firebase at
     this point, we want to store it in Firebase storage.
 
+    Note:  Firebase uses an ArrayBuffer now, but will keep notes below just in case
+            I would like to reimplement.  Switched to using npm busboy on the backend.
+
+    TODO: DELETE NOTES BELOW WHEN WE VERIFY THAT APP FUNCTION
     So, we will convert the canvas base64Url to a blob, so to a file.
 
     The HTMLCanvasElement.toDataURL() method returns a data URI containing a representation of the image in the format specified by the type parameter (defaults to PNG). The returned image is in a resolution of 96 dpi.
@@ -273,6 +277,18 @@ captureButton.addEventListener('click', event => {
   picture = dataURItoBlob(canvasElement.toDataURL());
 
 });
+
+
+// The 'change' event is fired whenever a User changes a file, picks a new image
+// imagePicker is the input element itself
+imagePicker.addEventListener('change', event => {
+  // event.target.files is a list of files  == an Array
+  //  Our picker will only accept One, so we will use the first element in this Array -[0]
+  // This gives us access to whatever the User picked
+  picture = event.target.files[0]
+});
+
+
 
 
 
