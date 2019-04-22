@@ -28,6 +28,7 @@ let picture;
 /*  Variables for Geolocation */
 const locationButton = document.querySelector('#location-btn');
 const locationLoader = document.querySelector('#location-loader');
+let fetchedLocation;
 
 
 
@@ -55,6 +56,8 @@ locationButton.addEventListener('click', event => {
     locationLoader.style.display = 'none';
 
     alert('So sorry!  Epic fail!  We could not find your location, please enter manually!');
+    fetchedLocation = null;
+
     console.log(err);
 
 
