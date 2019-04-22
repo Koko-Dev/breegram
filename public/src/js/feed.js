@@ -24,6 +24,10 @@ let imagePicker = document.querySelector('#image-picker');
      using a camera. */
 let uploadImage = document.querySelector('#pick-image');
 
+/*  Variables for Geolocation */
+const locationButton = document.querySelector('#location-btn');
+const locationLoader = document.querySelector('#location-loader');
+
 let picture;
 
 if(!window.Promise) {
