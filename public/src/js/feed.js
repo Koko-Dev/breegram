@@ -34,7 +34,36 @@ const locationLoader = document.querySelector('#location-loader');
 /*  Add an event listener on the locaction button to get
 *     User Location */
 locationButton.addEventListener('click', event => {
-  // Geolocation is available
+  // Geolocation should be available at this point, but will check again
+  if (!('geolocation' in navigator)){
+    // We do not have geolocation capabilities
+    return;
+  }
+
+  // Show the spinner
+  locationButton.style.display = 'none';
+  locationLoader.style.display = 'block';
+
+  // Get the User's current position
+  // Prompts user for permission
+  navigator.geolocation.getCurrentPosition(function (position) {
+
+  }, function (err) {
+    // Error, show location button and hide the spinner
+    //  So that the user can either try again or enter manually
+    locationButton.style.display = 'inline';
+    locationLoader.style.display = 'none';
+
+    alert('So sorry!  Epic fail!  We could not find your location, please enter manually!');
+    console.log(err);
+
+
+  }, {
+    timeout: 10000
+  })
+
+
+
 
 
 
@@ -46,12 +75,9 @@ function initializeLocation () {
     // Hide the Location Button
     locationButton.style.display = 'none';
     // locationLoader.style.display = 'none';
-
   } else {
-    console.log('Initializing Location');
-
+    console.log('[from initialLocation() function] Initializing Location');
   }
-
 }
 
 
