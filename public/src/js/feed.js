@@ -29,6 +29,9 @@ let picture;
 const locationButton = document.querySelector('#location-btn');
 const locationLoader = document.querySelector('#location-loader');
 let fetchedLocation;
+// Selecting the wrapping div for location, not the input element
+// This is used for 'is-focused'
+let locationInputDiv = document.querySelector('#manual-location');
 
 
 
@@ -61,14 +64,15 @@ locationButton.addEventListener('click', event => {
     fetchedLocation ={latitude: position.coords.latitude, lng: position.coords.longitude};
 
     // Parsed address
-    locationInput.value = "Virginia";
+    locationInput.value = "In Virginia";
 
     // Required by third party library
     //   to make it look correct once we manually set value
-    locationInput.classList.add('is-focused');
+    locationInputDiv.classList.add('is-focused');
 
 
   }, function (err) {
+    console.log(err);
     // Error, show location button and hide the spinner
     //  So that the user can either try again or enter manually
     locationButton.style.display = 'inline';
@@ -76,10 +80,6 @@ locationButton.addEventListener('click', event => {
 
     alert('Epic fail!  We could not fetch your location, please enter manually!');
     fetchedLocation = {lat: null, lng: null};
-
-    console.log(err);
-
-
   }, {
     timeout: 10000
   })
