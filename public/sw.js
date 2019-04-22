@@ -3,15 +3,14 @@ importScripts('/src/js/idb.js');
 importScripts('/src/js/indexedDB.js');
 
 
-const STATIC_CACHE = 'static-v97';
-const DYNAMIC_CACHE = 'dynamic-v93';
+const STATIC_CACHE = 'static-v100';
+const DYNAMIC_CACHE = 'dynamic-v96';
 
 // for storing request.url's in the cache, not file paths
 const STATIC_FILES = [
   '/',
   '/index.html',
   '/src/js/app.js',
-  '/src/js/indexedDB.js',
   '/src/js/feed.js',
   '/src/js/idb.js',
   '/src/js/promise.js',
