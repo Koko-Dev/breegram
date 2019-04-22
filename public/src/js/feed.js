@@ -84,10 +84,7 @@ locationButton.addEventListener('click', event => {
 
 
 
-
-
-
-})
+});
 
 function initializeLocation () {
   if (!('geolocation' in navigator)){
@@ -99,8 +96,6 @@ function initializeLocation () {
     console.log('[from initialLocation() function] Initializing Location');
   }
 }
-
-
 
 
 
@@ -738,7 +733,7 @@ form.addEventListener('submit', event => {
   if('serviceWorker' in navigator && 'SyncManager' in window) {
      /* Check to see that the Service Worker has been configured and activated,
           ready to take some input.. using .ready (returns a Promise)
-       .ready is a reqd-only property of the SW interface which provides
+       .ready is a read-only property of the SW interface which provides
              a way of delaying code execution until an SW is active.
        .ready returns a Promise that will never reject, and which waits
              indefinitely until the ServiceWorkerRegistration associated
@@ -750,16 +745,19 @@ form.addEventListener('submit', event => {
         /*
           Create an object with:
              -- id (new Date in string form as a unique identifier)
-             -- title value, and
-             -- location value
+             -- title value,
+             -- location value,
+             -- rawLocation value
 
              UPDATE:  This is going to indexedDB, so we will add picture
+             UPDATE 2:  Add fetchedLocation (location coordinates)
        */
         let post = {
           id: new Date().toISOString(),
           title: titleInput.value,
           location: locationInput.value,
-          picture: picture
+          picture: picture,
+          rawLocation: fetchedLocation
         };
 
         /*
