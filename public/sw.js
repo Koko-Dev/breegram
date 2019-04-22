@@ -400,6 +400,8 @@ self.addEventListener('sync', event => {
                     postData.append('id', dt.id);
                     postData.append('title', dt.title);
                     postData.append('location', dt.location);
+                    postData.append('rawLocationLat', dt.rawLocation.lat);
+                    postData.append('rawLocationLng', dt.rawLocation.lng);
 
                     // Override dt.picture with dt.id + '.png'
                     //   Defaults to a png
