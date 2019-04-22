@@ -23,12 +23,21 @@ let imagePicker = document.querySelector('#image-picker');
      has access to a camera and when the Browser supports
      using a camera. */
 let uploadImage = document.querySelector('#pick-image');
+let picture;
 
 /*  Variables for Geolocation */
 const locationButton = document.querySelector('#location-btn');
 const locationLoader = document.querySelector('#location-loader');
 
-let picture;
+/*  Add an event listener on the locaction button to get
+*     User Location */
+locationButton.addEventListener('click', event => {
+
+})
+
+
+
+
 
 if(!window.Promise) {
   window.Promise = Promise;
@@ -369,6 +378,12 @@ function closeCreatePostModal() {
   videoPlayer.style.display = 'none';
   uploadImage.style.display = 'none';
   canvasElement.style.display = 'none';
+
+  // Show the location button, if hidden
+  locationButton.style.display = 'inline';
+
+  // Hide location loader, in case it was showing before
+  locationLoader.style.display = 'none';
 }
 
 /*
