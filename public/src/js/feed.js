@@ -453,7 +453,27 @@ function closeCreatePostModal() {
 
   // Hide location loader, in case it was showing before
   locationLoader.style.display = 'none';
+
+  /*
+  *   Use case:  At this point, when we close this modal, t
+  *   he camera starts sending.  We don't want this kept on
+  *   because it costs resources and is not a good User Experience.
+  *
+  *   So, we want to stop the camera stream when modal is closed.
+  *
+  *   The videoPlayer source object is set if we set a stream to it.
+  *   Check to see if we have the video player source object set.
+  *   If so, we want to get all of the video tracks and stop them
+  *   manually.
+  *   */
+  if (videoPlayer.srcObject) {
+    videoPlayer.srcObject.getVideoTracks().forEach(track => {
+      track.stop();
+    })
+  }
 }
+
+
 
 /*
 * shareImageButton from #share-image-button, from public/index.html, line 131
