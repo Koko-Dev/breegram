@@ -376,13 +376,11 @@ imagePicker.addEventListener('change', event => {
 // We want to install the app install banner prompt which we prevented in app.js at this point
 function openCreatePostModal() {
 
-  // createPostArea.style.display = 'block';
-
-  /*setTimeout(() => {
+  // Wrap animation in a 1ms delay to avoid intermittent
+  //  clunkiness on open post modal
+  setTimeout(() => {
     createPostArea.style.transform = 'translateY(0)';
-  }, 1);*/
-
-  createPostArea.style.transform = 'translateY(0)';
+  }, 1);
 
   // Initialize Camera in as many devices as possible
   // We want to open it after the User clicks on the modal
