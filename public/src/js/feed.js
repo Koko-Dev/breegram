@@ -440,7 +440,7 @@ function openCreatePostModal() {
 closeTheFab.addEventListener('click', closeCreatePostModal);
 
 function closeCreatePostModal() {
-  createPostArea.style.transform = 'translateY(100vh)';
+  // createPostArea.style.transform = 'translateY(100vh)';
   // createPostArea.style.display = 'none';
 
   // Modal closed. Hide the video player, image picker, and canvas.
@@ -466,11 +466,20 @@ function closeCreatePostModal() {
   *   If so, we want to get all of the video tracks and stop them
   *   manually.
   *   */
+
+
   if (videoPlayer.srcObject) {
     videoPlayer.srcObject.getVideoTracks().forEach(track => {
       track.stop();
     })
   }
+
+  // The animation is a bit clunky because closing videoPlayer tracks
+  //    takes a lot of resources, so we put the animation on a delay
+  setTimeout(() => {
+    createPostArea.style.transform = 'translateY(100vh)';
+
+  }, 1);
 }
 
 
