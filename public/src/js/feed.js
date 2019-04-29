@@ -28,7 +28,9 @@ let picture;
 /*  Variables for Geolocation */
 const locationButton = document.querySelector('#location-btn');
 const locationLoader = document.querySelector('#location-loader');
-let fetchedLocation;
+let fetchedLocation = {lat: 0, lng: 0};
+
+
 // Selecting the wrapping div for location, not the input element
 // This is used for 'is-focused'
 let locationInputDiv = document.querySelector('#manual-location');
@@ -43,10 +45,8 @@ locationButton.addEventListener('click', event => {
     // We do not have geolocation capabilities
     return;
   }
-
-  let alertVisible = false;
-
-
+   // Track whether alert that geolocation failed was displayed
+  let alertDisplayed = false;
 
   // Show the spinner
   locationButton.style.display = 'none';
@@ -64,6 +64,8 @@ locationButton.addEventListener('click', event => {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     }*/
+
+
 
     fetchedLocation ={
       lat: position.coords.latitude,
@@ -85,7 +87,13 @@ locationButton.addEventListener('click', event => {
     locationButton.style.display = 'inline';
     locationLoader.style.display = 'none';
 
-    alert('Epic fail!  We could not fetch your location, please enter manually!');
+    // Since Geolocation failed, if alert was not displayed already, display it and
+    //   set alertDisplayed to true
+    if (!alertDisplayed) {
+      alertDisplayed = true;
+      alert('Epic fail!  We could not fetch your location, please enter manually!');
+    }
+
     fetchedLocation = {lat: 0, lng: 0};
   }, {
     timeout: 7000
