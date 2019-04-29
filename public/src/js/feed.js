@@ -44,6 +44,10 @@ locationButton.addEventListener('click', event => {
     return;
   }
 
+  let alertVisible = false;
+
+
+
   // Show the spinner
   locationButton.style.display = 'none';
   locationLoader.style.display = 'block';
