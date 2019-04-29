@@ -82,9 +82,9 @@ locationButton.addEventListener('click', event => {
     locationLoader.style.display = 'none';
 
     alert('Epic fail!  We could not fetch your location, please enter manually!');
-    fetchedLocation = {lat: null, lng: null};
+    fetchedLocation = {lat: 0, lng: 0};
   }, {
-    timeout: 10000
+    timeout: 7000
   })
 
 
