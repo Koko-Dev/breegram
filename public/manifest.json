@@ -1,6 +1,6 @@
 {
-  "name": "breeGRAM",
-  "short_name": "breeGRAM",
+  "name": "breegram",
+  "short_name": "breegram",
   "start_url": "/index.html",
   "scope": ".",
   "display": "standalone",

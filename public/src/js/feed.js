@@ -464,6 +464,9 @@ function closeCreatePostModal() {
   // Hide location loader, in case it was showing before
   locationLoader.style.display = 'none';
 
+  // Show Capture Button on open post modal
+  captureButton.style.display = 'inline';
+
   /*
   *   Use case:  At this point, when we close this modal, t
   *   he camera starts sending.  We don't want this kept on
